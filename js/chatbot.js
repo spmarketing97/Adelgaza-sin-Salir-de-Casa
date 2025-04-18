@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Respuestas según palabras clave
         if (message.includes('precio') || message.includes('costo') || message.includes('valor') || message.includes('cuánto cuesta')) {
-            return "El programa completo tiene un valor de $90.00 USD, con un descuento del 47% sobre el precio original de $169.00 USD. Incluye acceso de por vida a todas las clases y 10 clases de regalo.";
+            return "El programa completo tiene un valor de $90.00 USD, con un descuento del 47% sobre el precio original de $169.00 USD. Incluye acceso de por vida a todas las clases, 10 clases de regalo y garantía de 7 días con 100% devolución del dinero sin preguntas.";
         } 
         else if (message.includes('empiezo') || message.includes('comenzar') || message.includes('iniciar')) {
             return "Para comenzar, solo necesitas inscribirte en nuestro programa a través del botón '¡QUIERO INSCRIBIRME AHORA!' que encontrarás en la página. Una vez inscrito, recibirás acceso inmediato a todas las clases organizadas por niveles.";

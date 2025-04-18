@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
             newSuggestions = [
                 '¿Cómo puedo pagar?',
                 '¿Hay promociones disponibles?',
-                '¿Puedo cancelar cuando quiera?'
+                '¿Tiene garantía de devolución?'
             ];
         } else if (message.includes('ejercicio') || message.includes('rutina')) {
             newSuggestions = [
