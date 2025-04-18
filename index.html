@@ -107,18 +107,46 @@
             display: none;
             flex-direction: column;
             cursor: pointer;
+            width: 35px;
+            height: 35px;
+            justify-content: space-around;
+            padding: 6px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1001;
         }
         
         .bar {
-            width: 25px;
+            width: 100%;
             height: 3px;
-            background-color: #fff;
-            margin: 3px 0;
-            transition: 0.4s;
+            background-color: #ff5757;
+            margin: 0;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+        
+        .menu-toggle.active .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        
+        .menu-toggle.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
         }
         
         .navbar.scrolled .bar {
-            background-color: #333;
+            background-color: #ff5757;
+        }
+        
+        /* Estilo para el body cuando el menú está abierto */
+        body.menu-open {
+            overflow: hidden;
         }
         
         /* Header y banner principal */
@@ -264,6 +292,9 @@
             box-shadow: -3px 3px 10px rgba(0,0,0,0.2);
             width: 150px;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .timer {
@@ -1190,6 +1221,20 @@
                 font-size: 1rem;
             }
             
+            /* Navbar eliminado completamente para móviles */
+            .navbar {
+                display: none; /* Ocultamos la barra de navegación completamente */
+            }
+            
+            .menu-toggle {
+                display: none;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            /* Estilos para otras secciones */
             .benefits-container, .bonus-container {
                 grid-template-columns: 1fr;
             }
@@ -1211,69 +1256,108 @@
                 font-size: 0.9rem;
             }
             
-            .timer-container {
-                width: auto;
-                padding: 8px 12px;
-                bottom: 80px;
-                top: auto;
-                right: 10px;
-                border-radius: 8px;
-                font-size: 0.9rem;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            /* Banner ajustado para móviles sin navbar */
+            header {
+                margin-top: 0; /* Eliminamos el margen que se usaba para el navbar */
+                overflow: hidden;
             }
             
-            .timer {
-                font-size: 1.2rem;
+            .banner-container {
+                height: auto;
+                min-height: 300px;
             }
             
-            .timer-text {
-                font-size: 0.8rem;
-                margin-bottom: 2px;
-            }
-        }
-        
-        /* Responsive del menú */
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: flex;
+            .banner-header {
+                height: 100%;
+                object-fit: cover;
+                min-height: 300px;
             }
             
-            .nav-links {
-                position: fixed;
-                top: 70px;
-                left: -100%;
-                flex-direction: column;
-                background-color: white;
-                width: 100%;
-                height: calc(100vh - 70px);
-                align-items: center;
-                padding-top: 20px;
-                transition: 0.3s;
-                z-index: 999;
-            }
-            
-            .nav-links.active {
-                left: 0;
-            }
-            
-            .nav-links li {
-                margin: 15px 0;
-            }
-            
-            .nav-links a {
-                color: #333;
-            }
-            
-            .nav-cta {
-                margin: 15px 0 0 0;
+            .banner-content {
+                width: 90%;
+                padding: 15px;
+                max-width: 400px;
+                margin-top: 15px; /* Añadimos margen superior extra */
             }
             
             .banner-title {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
+                padding: 8px 10px;
+                margin-bottom: 0.5rem;
+                line-height: 1.3;
             }
             
             .banner-subtitle {
+                font-size: 0.9rem;
+                padding: 5px 10px;
+                margin-bottom: 1rem;
+                line-height: 1.4;
+            }
+            
+            .banner-cta {
+                padding: 10px 20px;
                 font-size: 1rem;
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            /* Timer ajustado para móviles - ahora a la izquierda y minimalista */
+            .timer-container {
+                width: auto;
+                padding: 8px 10px;
+                top: auto;
+                bottom: 20px;
+                left: 0;
+                right: auto;
+                border-radius: 0 5px 5px 0;
+                background-color: rgba(255, 87, 87, 0.85);
+                box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                max-width: 130px;
+                transform: translateZ(0); /* Para prevenir problemas de rendimiento */
+                transition: all 0.3s ease;
+                z-index: 998; /* Aseguramos que es menor que el chat pero mayor que el resto */
+            }
+            
+            /* Versión compacta del timer al hacer scroll */
+            .timer-container.compact {
+                max-width: 100px;
+                padding: 6px 8px;
+                background-color: rgba(255, 87, 87, 0.75);
+                opacity: 0.9;
+            }
+            
+            .timer-container.compact .timer {
+                font-size: 0.9rem;
+            }
+            
+            .timer-container.compact .timer-text {
+                font-size: 0.65rem;
+            }
+            
+            .timer {
+                font-size: 1rem;
+                font-weight: bold;
+                margin-left: 0;
+                margin-bottom: 0;
+            }
+            
+            .timer-text {
+                font-size: 0.7rem;
+                margin-bottom: 0;
+                font-weight: 500;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .video-container {
+                border-radius: 8px;
+                margin-top: 30px;
             }
         }
         
@@ -1873,6 +1957,50 @@
             .suggestion-chip {
                 font-size: 10px;
                 padding: 4px 8px;
+            }
+            
+            /* Banner ajustado para móviles pequeños */
+            .banner-container {
+                min-height: 250px;
+            }
+            
+            .banner-header {
+                min-height: 250px;
+            }
+            
+            .banner-content {
+                padding: 10px;
+            }
+            
+            .banner-title {
+                font-size: 1.4rem;
+                padding: 5px 8px;
+            }
+            
+            .banner-subtitle {
+                font-size: 0.8rem;
+                padding: 4px 8px;
+                margin-bottom: 0.8rem;
+            }
+            
+            .banner-cta {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            /* Timer ajustado para móviles pequeños */
+            .timer-container {
+                max-width: 110px;
+                padding: 6px 8px;
+                bottom: 15px;
+            }
+            
+            .timer {
+                font-size: 0.9rem;
+            }
+            
+            .timer-text {
+                font-size: 0.65rem;
             }
         }
         
@@ -2979,6 +3107,31 @@
             loadSuggestions('initial');
         });
         
+        // Función para ajustar la posición del timer según el dispositivo
+        function adjustTimerPosition(isChatOpen) {
+            const timer = document.querySelector('.timer-container');
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // En móviles, ajustamos para que esté en la esquina inferior izquierda
+                timer.style.bottom = '20px';
+                timer.style.top = 'auto';
+                timer.style.left = '0';
+                timer.style.right = 'auto';
+                
+                // Si el chat está abierto, ajustamos para evitar superposición
+                if (isChatOpen) {
+                    timer.style.bottom = '70px';
+                }
+            } else {
+                // En escritorio, volvemos a la posición original (derecha)
+                timer.style.top = '30%';
+                timer.style.bottom = 'auto';
+                timer.style.right = '0';
+                timer.style.left = 'auto';
+            }
+        }
+        
         // Gestión de cookies y GDPR
         function manageCookieConsent() {
             const cookieConsent = document.getElementById('cookieConsent');
@@ -3029,6 +3182,134 @@
         
         // Ejecutar gestión de cookies cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', manageCookieConsent);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Menú móvil - solo para escritorio ahora
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            const navbar = document.querySelector('.navbar');
+            
+            // Verificar si estamos en un dispositivo móvil
+            const isMobile = window.innerWidth <= 768;
+            
+            // Asegurarnos de que la navegación esté oculta en móviles
+            if (isMobile && navbar) {
+                navbar.style.display = 'none';
+            }
+            
+            // Solo si estamos en escritorio (>768px)
+            if (menuToggle && window.innerWidth > 768) {
+                menuToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navLinks.classList.toggle('active');
+                    document.body.classList.toggle('menu-open');
+                    menuToggle.classList.toggle('active');
+                });
+                
+                // Cerrar el menú cuando se hace clic fuera de él
+                document.addEventListener('click', function(e) {
+                    if (navLinks.classList.contains('active') && 
+                        !navLinks.contains(e.target) && 
+                        e.target !== menuToggle) {
+                        navLinks.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                        menuToggle.classList.remove('active');
+                    }
+                });
+                
+                // Cerrar el menú al hacer clic en un enlace y hacer scroll a la sección
+                const menuLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Cerrar el menú
+                        navLinks.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                        if (menuToggle) {
+                            menuToggle.classList.remove('active');
+                        }
+                        
+                        // Obtener el destino del enlace
+                        const targetId = this.getAttribute('href');
+                        const targetSection = document.querySelector(targetId);
+                        
+                        if (targetSection) {
+                            // Hacer scroll suave a la sección
+                            window.scrollTo({
+                                top: targetSection.offsetTop - 80, // Ajustar para el menú fijo
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+                
+                // Manejar enlaces externos o normales en el menú
+                const externalLinks = document.querySelectorAll('.nav-links a:not([href^="#"])');
+                externalLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        // Solo cerrar el menú
+                        navLinks.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                        if (menuToggle) {
+                            menuToggle.classList.remove('active');
+                        }
+                    });
+                });
+            }
+            
+            // Detectar scroll para ajustar estilos del timer
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', function() {
+                const st = window.pageYOffset || document.documentElement.scrollTop;
+                const timerContainer = document.querySelector('.timer-container');
+                
+                // Solo aplicamos cambios en móviles
+                if (window.innerWidth <= 768) {
+                    // Al hacer scroll hacia abajo más de 100px, hacemos el timer más compacto
+                    if (st > 100) {
+                        timerContainer.classList.add('compact');
+                    } else {
+                        timerContainer.classList.remove('compact');
+                    }
+                    
+                    // Ajustar posición si hay algún elemento que podría superponerse
+                    adjustTimerPosition(document.querySelector('.floating-chat-box')?.classList.contains('active') || false);
+                }
+                
+                lastScrollTop = st <= 0 ? 0 : st;
+            }, false);
+            
+            // Inicializar el temporizador
+            startCountdown();
+        });
+        
+        // Función para iniciar el temporizador de cuenta regresiva
+        function startCountdown() {
+            const timerElement = document.getElementById('countdown');
+            const minutes = 25;
+            const seconds = 0;
+            
+            let totalSeconds = minutes * 60 + seconds;
+            
+            function updateTimer() {
+                const minutesLeft = Math.floor(totalSeconds / 60);
+                const secondsLeft = totalSeconds % 60;
+                
+                timerElement.textContent = `${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
+                
+                if (totalSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                
+                totalSeconds--;
+            }
+            
+            // Actualizar inmediatamente y luego cada segundo
+            updateTimer();
+            const countdownInterval = setInterval(updateTimer, 1000);
+        }
     </script>
     <!-- Font Awesome para iconos -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
