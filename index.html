@@ -9,6 +9,9 @@
     <link rel="apple-touch-icon" href="img/favicon.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Scripts de análisis y configuración (config.js debe cargarse primero) -->
+    <script src="config.js"></script>
+    <script src="analytics.js"></script>
     <style>
         /* Estilos generales */
         * {
@@ -30,8 +33,97 @@
             padding: 0 20px;
         }
         
+        /* Menú de navegación */
+        .navbar {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            padding: 0.8rem 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar.scrolled {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 0.5rem 0;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            max-width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ff5757;
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin: 0 15px;
+        }
+        
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #ff5757;
+        }
+        
+        .nav-cta {
+            background-color: #ff5757;
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 87, 87, 0.3);
+        }
+        
+        .nav-cta:hover {
+            background-color: #e53f3f;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 87, 87, 0.4);
+        }
+        
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #fff;
+            margin: 3px 0;
+            transition: 0.4s;
+        }
+        
+        .navbar.scrolled .bar {
+            background-color: #333;
+        }
+        
         /* Header y banner principal */
         header {
+            margin-top: 70px;
             background-color: #fff;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             position: relative;
@@ -47,19 +139,80 @@
             width: 100%;
             height: auto;
             display: block;
+            opacity: 0.7;
+            filter: brightness(0.8);
         }
         
-        .cta-buttons {
+        .banner-content {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            text-align: center;
+            width: 80%;
+            z-index: 10;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .banner-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            color: #ffffff;
+            padding: 10px 15px;
+            position: relative;
+            display: inline-block;
+            letter-spacing: 1px;
+        }
+        
+        .banner-title::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background-color: #ff5757;
+            box-shadow: 0 0 10px #ff5757;
+        }
+        
+        .banner-title::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background-color: #ff5757;
+            box-shadow: 0 0 10px #ff5757;
+        }
+        
+        .banner-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: inline-block;
+            color: #ffffff;
+            font-weight: 500;
+            background-color: rgba(255, 87, 87, 0.2);
+            border-left: 3px solid #ff5757;
+            border-right: 3px solid #ff5757;
+        }
+        
+        .cta-buttons {
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 15px;
-            width: 80%;
-            max-width: 400px;
-            z-index: 10;
+            width: fit-content;
+            margin: 0 auto;
         }
         
         .banner-cta {
@@ -106,11 +259,11 @@
             position: fixed;
             top: 30%;
             right: 0;
-            z-index: 9999;
+            z-index: 995;
             border-radius: 10px 0 0 10px;
             box-shadow: -3px 3px 10px rgba(0,0,0,0.2);
             width: 150px;
-            transition: top 0.3s ease;
+            transition: all 0.3s ease;
         }
         
         .timer {
@@ -132,27 +285,36 @@
         .intro {
             text-align: center;
             background-color: #fff;
-            padding: 50px 0;
+            padding: 40px 0;
         }
         
-        h1, h2 {
+        .intro h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .intro .section-subtitle {
             margin-bottom: 20px;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            color: #ff5757;
-            border-bottom: 2px solid #ff5757;
-            padding-bottom: 10px;
-            display: inline-block;
+            color: #666;
         }
         
         h2 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #ff5757;
-            border-bottom: 2px solid #ff5757;
-            padding-bottom: 10px;
+            padding-bottom: 5px;
             display: inline-block;
+            text-align: center;
+            margin: 0 auto 5px;
+            font-weight: 600;
+        }
+        
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 30px;
+            text-align: center;
         }
         
         p {
@@ -160,29 +322,73 @@
             font-size: 1.1rem;
         }
         
+        /* Video Section */
+        .video-container {
+            margin: 20px auto 0;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-radius: 10px;
+        }
+        
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+        
         /* Beneficios */
         .benefits {
             background-color: #f9f9f9;
-            padding: 70px 0;
+            padding: 50px 0;
+            text-align: center;
         }
         
-        .benefits-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+        .benefits h2 {
+            font-size: 1.8rem;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .benefits-slider-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 30px auto 0;
+            overflow: hidden;
+        }
+        
+        .benefits-slider {
+            display: flex;
+            transition: transform 0.5s ease;
+            margin-left: 50px; /* Espacio para los botones de navegación */
+            margin-right: 50px;
         }
         
         .benefit-item {
+            flex: 0 0 300px;
             background-color: #fff;
-            padding: 25px;
+            padding: 20px;
+            margin: 0 15px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             transition: transform 0.3s ease;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         
         .benefit-item:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
         }
         
         .benefit-item i {
@@ -191,387 +397,12 @@
             margin-bottom: 15px;
         }
         
-        /* Niveles */
-        .levels {
-            padding: 70px 0;
-            background-color: #fff;
-            scroll-margin-top: 20px;
-        }
-        
-        .level-container {
-            margin-top: 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .level-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .level-card {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
-            flex: 1;
-            min-width: 200px;
-            text-align: center;
-            border-left: 4px solid #ff5757;
-        }
-        
-        .level-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-        }
-        
-        .level-title {
-            color: #ff5757;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        .level-classes {
-            display: inline-block;
-            background-color: #ff5757;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        /* Bonus */
-        .bonus {
-            background-color: #f9f9f9;
-            padding: 70px 0;
-        }
-        
-        .bonus-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-        
-        .bonus-item {
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease;
-        }
-        
-        .bonus-item:hover {
-            transform: translateY(-5px);
-        }
-        
-        .bonus-title {
-            color: #ff5757;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        /* Acerca de */
-        .about {
-            padding: 70px 0;
-            background-color: #fff;
-        }
-        
-        /* Precio Widget */
-        .pricing {
-            padding: 70px 0;
-            background-color: #f9f9f9;
-            text-align: center;
-        }
-        
-        .price-widget {
-            max-width: 450px;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-        }
-        
-        .price-widget:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        
-        .price-widget-header {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .price-image {
-            max-width: 100%;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-        
-        .price-widget:hover .price-image {
-            transform: scale(1.05);
-        }
-        
-        .offer-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background-color: #ff5757;
-            color: white;
-            font-size: 0.9rem;
-            padding: 8px 15px;
-            border-radius: 50px;
-            font-weight: 600;
-            z-index: 10;
-            box-shadow: 0 5px 15px rgba(255, 87, 87, 0.3);
-        }
-        
-        .price-widget-body {
-            padding: 30px;
-        }
-        
-        .price-comparison {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .price-old {
-            text-decoration: line-through;
-            color: #888;
-            font-size: 1.5rem;
-        }
-        
-        .price-save {
-            background-color: #e6f7e6;
-            color: #28a745;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .price {
-            font-size: 3.5rem;
-            color: #ff5757;
-            font-weight: 700;
-            margin: 20px 0;
-        }
-        
-        .price-currency {
-            font-size: 1.5rem;
-            position: relative;
-            top: -20px;
-        }
-        
-        .price-decimal {
-            font-size: 2rem;
-        }
-        
-        .price-features {
-            margin: 25px 0;
-            text-align: left;
-        }
-        
-        .price-feature {
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-        }
-        
-        .price-feature i {
-            color: #ff5757;
-            margin-right: 10px;
-        }
-        
-        .limited-offer {
-            color: #ff5757;
-            font-weight: 600;
-            font-size: 1.2rem;
-            background-color: rgba(255, 87, 87, 0.1);
-            display: inline-block;
-            padding: 8px 15px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background-color: #ff5757;
-            color: white;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 50px;
-            margin-top: 30px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 87, 87, 0.3);
-            animation: pulse 2s infinite;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .cta-button:hover {
-            background-color: #e53f3f;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 87, 87, 0.4);
-        }
-        
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        /* Certificado */
-        .certificate {
-            padding: 70px 0;
-            text-align: center;
-        }
-        
-        .certificate-image {
-            max-width: 600px;
-            margin: 0 auto;
-            display: block;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 40px 0;
-            text-align: center;
-        }
-        
-        .footer-logo {
-            max-width: 200px;
-            margin: 0 auto 20px;
-        }
-        
-        .copyright {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-        
-        .telegram-button {
-            display: inline-block;
-            background-color: #0088cc;
-            color: white;
-            padding: 12px 25px;
+        .benefit-item p {
             font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 50px;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.3);
+            margin: 0;
         }
         
-        .telegram-button i {
-            margin-right: 8px;
-        }
-        
-        .telegram-button:hover {
-            background-color: #0077b5;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 136, 204, 0.4);
-        }
-        
-        /* Testimonios Slider */
-        .testimonials {
-            padding: 70px 0;
-            background-color: #fff;
-        }
-        
-        .testimonial-container {
-            max-width: 800px;
-            margin: 40px auto 0;
-            position: relative;
-        }
-        
-        .testimonial-slide {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .testimonial-slide.active {
-            display: block;
-            animation: fadeIn 0.8s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .testimonial-image {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 20px;
-            border: 3px solid #ff5757;
-        }
-        
-        .testimonial-text {
-            font-size: 1.1rem;
-            font-style: italic;
-            line-height: 1.7;
-            color: #555;
-            max-width: 650px;
-            margin: 0 auto 15px;
-        }
-        
-        .testimonial-name {
-            font-weight: 700;
-            color: #ff5757;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-        
-        .slider-controls {
-            margin-top: 30px;
-            text-align: center;
-        }
-        
-        .slider-dot {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #ddd;
-            margin: 0 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        
-        .slider-dot.active {
-            background-color: #ff5757;
-        }
-        
-        .prev-btn, .next-btn {
+        .benefits-nav-button {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
@@ -587,28 +418,776 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 2;
         }
         
-        .prev-btn:hover, .next-btn:hover {
+        .benefits-nav-button:hover {
             background-color: rgba(255, 87, 87, 1);
         }
         
-        .prev-btn {
-            left: -20px;
+        .benefits-prev {
+            left: 10px;
         }
         
-        .next-btn {
-            right: -20px;
+        .benefits-next {
+            right: 10px;
+        }
+        
+        .benefits-indicator-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .benefits-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .benefits-dot.active {
+            background-color: #ff5757;
+        }
+        
+        /* Niveles */
+        .levels {
+            padding: 70px 0;
+            background-color: #fff;
+            scroll-margin-top: 20px;
+            text-align: center;
+        }
+        
+        .level-container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .level-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .level-card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+            max-width: 250px;
+            text-align: center;
+            border-left: 4px solid #ff5757;
+        }
+        
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        
+        .level-title {
+            color: #ff5757;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .level-classes {
+            display: inline-block;
+            background-color: #ff5757;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Bonus */
+        .bonus-section {
+            background-color: #f9f9f9;
+            padding: 40px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bonus-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,87,87,0.05) 0%, rgba(255,255,255,1) 100%);
+            z-index: 0;
+        }
+        
+        .bonus-section .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .bonus-section h2 {
+            font-size: 1.8rem;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .bonus-section h2 i {
+            color: #ff5757;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        .bonus-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background-color: #ff5757;
+        }
+        
+        .bonus-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .bonus-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .bonus-item {
+            background-color: #fff;
+            padding: 15px 10px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255,87,87,0.1);
+            width: 200px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .bonus-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: rgba(255, 87, 87, 0.3);
+        }
+        
+        .bonus-icon {
+            margin-bottom: 10px;
+            font-size: 2rem;
+            color: #ff5757;
+            height: 50px;
+            width: 50px;
+            line-height: 50px;
+            text-align: center;
+            background-color: rgba(255, 87, 87, 0.1);
+            border-radius: 50%;
+        }
+        
+        .bonus-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        
+        .bonus-count {
+            font-size: 0.9rem;
+            color: #fff;
+            background-color: #ff5757;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        /* Acerca de */
+        .about {
+            padding: 70px 0;
+            background-color: #fff;
+            text-align: center;
+            position: relative;
+        }
+        
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,87,87,0.08) 0%, rgba(255,255,255,1) 50%, rgba(255,87,87,0.08) 100%);
+            z-index: 0;
+        }
+        
+        .about .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .about h2 {
+            font-size: 2.2rem;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 5px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .about h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background-color: #ff5757;
+        }
+        
+        .about .section-subtitle {
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .about-content p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .about-content strong {
+            color: #ff5757;
+        }
+        
+        /* Certificado */
+        .certificate {
+            padding: 70px 0;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,87,87,0.1) 0%, rgba(255,255,255,1) 50%, rgba(255,87,87,0.1) 100%);
+            overflow: hidden;
+        }
+        
+        .certificate::before {
+            content: '✓';
+            position: absolute;
+            font-size: 25rem;
+            color: rgba(255, 87, 87, 0.03);
+            top: -50px;
+            right: 10%;
+            font-family: Arial, sans-serif;
+            z-index: 0;
+        }
+        
+        .certificate .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .certificate-title {
+            font-size: 1.8rem;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 5px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .certificate-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background-color: #ff5757;
+        }
+        
+        .certificate-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .certificate-image {
+            max-width: 600px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 5px solid #fff;
+        }
+        
+        .certificate-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+        
+        /* Precio y CTA Widget */
+        .pricing {
+            padding: 50px 0;
+            background-color: #f9f9f9;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,87,87,0.05) 0%, rgba(255,255,255,1) 100%);
+            z-index: 0;
+        }
+        
+        .pricing .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .price-widget {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(255, 87, 87, 0.1);
+        }
+        
+        .price-widget:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .price-widget-header {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .price-image {
+            max-width: 100%;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .price-widget-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+        }
+        
+        .offer-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #ff5757;
+            color: white;
+            font-size: 0.8rem;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 10;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+        
+        .price-widget-title {
+            font-size: 1.4rem;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+        
+        .price-widget-subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .price-widget-body {
+            padding: 25px 20px;
+        }
+        
+        .price-comparison {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .price-old {
+            text-decoration: line-through;
+            color: #888;
+            font-size: 1.3rem;
+            position: relative;
+        }
+        
+        .price-save {
+            background-color: #e6f7e6;
+            color: #28a745;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .price {
+            font-size: 3.2rem;
+            color: #ff5757;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+        
+        .price-currency {
+            font-size: 1.6rem;
+            position: relative;
+            top: -15px;
+        }
+        
+        .price-decimal {
+            font-size: 2rem;
+        }
+        
+        .price-features {
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .price-feature {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .price-feature i {
+            color: #ff5757;
+            margin-right: 10px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: #ff5757;
+            color: white;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 87, 87, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid #ff5757;
+        }
+        
+        .cta-button:hover {
+            background-color: white;
+            color: #ff5757;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 87, 87, 0.2);
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #fff;
+            padding: 40px 0;
+            margin-top: 40px;
+            text-align: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .footer-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 25px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        
+        .footer-section {
+            margin: 0 20px 20px;
+            min-width: 200px;
+        }
+        
+        .footer-section h4 {
+            color: #ff5757;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        
+        .footer-section h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: #ff5757;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin: 5px 0;
+        }
+        
+        .footer-links a {
+            color: #555;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-links a:hover {
+            color: #ff5757;
+        }
+        
+        .footer-links a:hover::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #ff5757;
+        }
+        
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .contact-button {
+            display: inline-block;
+            background-color: #ff5757;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 87, 87, 0.3);
+        }
+        
+        .contact-button i {
+            margin-right: 8px;
+        }
+        
+        .contact-button:hover {
+            background-color: #e53f3f;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 87, 87, 0.4);
+        }
+        
+        /* Testimonios */
+        .testimonials {
+            padding: 60px 0;
+            background-color: #fff;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,87,87,0.15) 0%, rgba(255,255,255,1) 100%);
+        }
+        
+        .testimonials .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonials h2 {
+            font-size: 2.2rem;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 5px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .testimonials h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background-color: #ff5757;
+        }
+        
+        .testimonials .section-subtitle {
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .testimonial-container {
+            max-width: 800px;
+            margin: 30px auto 0;
+            position: relative;
+            height: 400px; /* altura fija para evitar saltos */
+            overflow: hidden;
+        }
+        
+        .testimonial-slide {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            animation: fadeEffect 1.2s;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+        
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        
+        .testimonial-card {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.05);
+            min-height: 350px;
+        }
+        
+        .testimonial-card:before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 80px;
+            color: rgba(255, 87, 87, 0.1);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        
+        .testimonial-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            border: 3px solid #ff5757;
+            box-shadow: 0 5px 15px rgba(255,87,87,0.2);
+        }
+        
+        .testimonial-stars {
+            color: #ffbf00;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .testimonial-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            line-height: 1.6;
+            color: #555;
+            margin: 0 auto 20px;
+        }
+        
+        .testimonial-name {
+            font-weight: 700;
+            color: #ff5757;
+            font-size: 1.2rem;
+            background-color: rgba(255,87,87,0.1);
+            padding: 5px 15px;
+            border-radius: 30px;
         }
         
         /* Responsive */
         @media (max-width: 768px) {
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             h2 {
-                font-size: 1.7rem;
+                font-size: 1.5rem;
+            }
+            
+            .section-subtitle {
+                font-size: 1rem;
             }
             
             .benefits-container, .bonus-container {
@@ -618,17 +1197,804 @@
             .price {
                 font-size: 3rem;
             }
+            
+            .level-card {
+                max-width: 100%;
+            }
+            
+            .testimonial-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .testimonial-text {
+                font-size: 0.9rem;
+            }
+            
+            .timer-container {
+                width: auto;
+                padding: 8px 12px;
+                bottom: 80px;
+                top: auto;
+                right: 10px;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            }
+            
+            .timer {
+                font-size: 1.2rem;
+            }
+            
+            .timer-text {
+                font-size: 0.8rem;
+                margin-bottom: 2px;
+            }
+        }
+        
+        /* Responsive del menú */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                flex-direction: column;
+                background-color: white;
+                width: 100%;
+                height: calc(100vh - 70px);
+                align-items: center;
+                padding-top: 20px;
+                transition: 0.3s;
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                left: 0;
+            }
+            
+            .nav-links li {
+                margin: 15px 0;
+            }
+            
+            .nav-links a {
+                color: #333;
+            }
+            
+            .nav-cta {
+                margin: 15px 0 0 0;
+            }
+            
+            .banner-title {
+                font-size: 1.8rem;
+            }
+            
+            .banner-subtitle {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Estilos para el Chatbot */
+        .chatbot-section {
+            padding: 50px 0;
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        
+        .chat-container {
+            flex: 1;
+            min-width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            background-color: #fff;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #ff6b6b, #cc0000);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-title h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .chat-title p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 75%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            margin-bottom: 5px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background-color: #f0f0f0;
+            color: #333;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            background-color: #ff6b6b;
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background-color: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 18px;
+        }
+        
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            float: left;
+            margin: 0 1px;
+            background-color: #9E9EA1;
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+        
+        .typing-indicator span:nth-of-type(1) {
+            animation: 1s blink infinite 0.3333s;
+        }
+        
+        .typing-indicator span:nth-of-type(2) {
+            animation: 1s blink infinite 0.6666s;
+        }
+        
+        .typing-indicator span:nth-of-type(3) {
+            animation: 1s blink infinite 0.9999s;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 1; }
+        }
+        
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 10px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+            max-height: 80px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc transparent;
+        }
+        
+        .suggestion-chips::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .suggestion-chips::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .suggestion-chips::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 10px;
+        }
+        
+        .suggestion-chip {
+            background-color: rgba(255, 87, 87, 0.08);
+            color: #e53f3f;
+            border: 1px solid rgba(255, 87, 87, 0.3);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            margin-bottom: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .suggestion-chip:hover {
+            background-color: rgba(255, 87, 87, 0.15);
+            border-color: rgba(255, 87, 87, 0.5);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            background-color: white;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            background-color: #f5f5f5;
+            outline: none;
+        }
+        
+        .send-button {
+            background-color: #cc0000;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+        
+        .send-button:hover {
+            background-color: #a50000;
+        }
+        
+        /* Sección de Preguntas Frecuentes */
+        .faq-section {
+            padding: 50px 0;
+            background-color: #fff;
+            text-align: center;
+        }
+        
+        .faq-section .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .faq-item {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        
+        .faq-question {
+            background-color: #f9f9f9;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            color: #333;
+            position: relative;
+        }
+        
+        .faq-question::after {
+            content: '\f078';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-question.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .faq-question:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .faq-answer {
+            background-color: white;
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-answer.open {
+            padding: 15px 20px;
+            max-height: 500px;
+        }
+        
+        /* Chatbot Flotante */
+        .floating-chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            font-size: 14px;
+        }
+        
+        .chat-bubble {
+            width: 50px;
+            height: 50px;
+            background-color: #ff5757;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-bubble:hover {
+            transform: scale(1.05);
+            background-color: #e53f3f;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        
+        .chat-popup {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            max-width: 180px;
+            animation: fadeIn 0.5s ease;
+            font-size: 12px;
+            display: none;
+        }
+        
+        .chat-popup:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 15px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+        
+        .floating-chat-box {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            width: 280px;
+            height: 400px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            display: none;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-chat-box.active {
+            display: flex;
+        }
+        
+        .close-chat-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #ff6b6b, #cc0000);
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .chat-title h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .chat-title p {
+            margin: 2px 0 0;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #f9f9f9;
+        }
+        
+        .message {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin-bottom: 4px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background-color: #f0f0f0;
+            color: #333;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            background-color: #ff6b6b;
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background-color: #f0f0f0;
+            padding: 6px 12px;
+            border-radius: 15px;
+            margin-bottom: 5px;
+        }
+        
+        .typing-indicator span {
+            height: 6px;
+            width: 6px;
+            float: left;
+            margin: 0 1px;
+            background-color: #9E9EA1;
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+        
+        .typing-indicator span:nth-of-type(1) {
+            animation: 1s blink infinite 0.3333s;
+        }
+        
+        .typing-indicator span:nth-of-type(2) {
+            animation: 1s blink infinite 0.6666s;
+        }
+        
+        .typing-indicator span:nth-of-type(3) {
+            animation: 1s blink infinite 0.9999s;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 1; }
+        }
+        
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 10px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+            max-height: 80px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ccc transparent;
+        }
+        
+        .suggestion-chips::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .suggestion-chips::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .suggestion-chips::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 10px;
+        }
+        
+        .suggestion-chip {
+            background-color: rgba(255, 87, 87, 0.08);
+            color: #e53f3f;
+            border: 1px solid rgba(255, 87, 87, 0.3);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            margin-bottom: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .suggestion-chip:hover {
+            background-color: rgba(255, 87, 87, 0.15);
+            border-color: rgba(255, 87, 87, 0.5);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+            background-color: white;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 15px;
+            background-color: #f5f5f5;
+            outline: none;
+            font-size: 12px;
+        }
+        
+        .send-button {
+            background-color: #cc0000;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-left: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+            font-size: 12px;
+        }
+        
+        .send-button:hover {
+            background-color: #a50000;
+        }
+        
+        /* Responsive adjustments for chatbot */
+        @media (max-width: 768px) {
+            .floating-chat-container {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .floating-chat-box {
+                width: 260px;
+                height: 350px;
+                bottom: 65px;
+            }
+            
+            .chat-bubble {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+            
+            .timer-container {
+                bottom: 80px;
+                right: 10px;
+                top: auto;
+                width: auto;
+                font-size: 12px;
+                padding: 8px;
+                z-index: 999;
+            }
+            
+            .timer {
+                font-size: 1rem;
+            }
+            
+            .timer-text {
+                font-size: 0.7rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .floating-chat-box {
+                width: 240px;
+                height: 320px;
+                bottom: 55px;
+            }
+            
+            .message {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            
+            .suggestion-chip {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+        }
+        
+        /* Estilos para el aviso de cookies */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(51, 51, 51, 0.95);
+            color: white;
+            padding: 15px;
+            z-index: 9999;
+            display: none; /* Inicialmente oculto, se mostrará vía JavaScript */
+            box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cookie-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .cookie-content p {
+            margin: 0;
+            flex: 1;
+            min-width: 200px;
+            font-size: 0.9rem;
+        }
+        
+        .cookie-content a {
+            color: #ff5757;
+            text-decoration: underline;
+        }
+        
+        .cookie-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .cookie-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .cookie-button.accept {
+            background-color: #ff5757;
+            color: white;
+        }
+        
+        .cookie-button.accept:hover {
+            background-color: #e53f3f;
+        }
+        
+        .cookie-button.decline {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        .cookie-button.decline:hover {
+            background-color: #e0e0e0;
+        }
+        
+        @media (max-width: 768px) {
+            .cookie-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .cookie-buttons {
+                width: 100%;
+            }
+            
+            .cookie-button {
+                flex: 1;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Menú de navegación -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#">
+                <img src="img/logo.jpg" alt="Adelgaza sin Salir de Casa" class="logo">
+            </a>
+            <div class="menu-toggle">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#banner">Inicio</a></li>
+                <li><a href="#que-lograr">¿Qué vas a lograr?</a></li>
+                <li><a href="#como-lograrlo">¿Cómo lo vas a lograr?</a></li>
+                <li><a href="#testimonios">Testimonios</a></li>
+                <li><a href="#about">Acerca de</a></li>
+                <li><a href="https://hotm.art/AdelgazasinSalirdeCasa-LanCheckOut" class="nav-cta" target="_blank">¡Quiero Inscribirme!</a></li>
+            </ul>
+        </div>
+    </nav>
+    
     <!-- Banner Principal -->
-    <header>
+    <header id="banner">
         <div class="banner-container">
             <img src="img/banner-image.jpg" alt="Adelgaza sin Salir de Casa" class="banner-header">
-            <div class="cta-buttons">
-                <a href="https://hotm.art/AdelgazasinSalirdeCasa-LanCheckOut" class="banner-cta primary-cta" target="_blank">INSCRIBIRSE AHORA</a>
-                <a href="#como-lograrlo" class="banner-cta secondary-cta">VER CONTENIDO</a>
+            <div class="banner-content">
+                <h1 class="banner-title">Transforma tu cuerpo desde la comodidad de tu hogar</h1>
+                <p class="banner-subtitle">Resultados reales en solo 45 minutos al día sin necesidad de gimnasio</p>
+                <div class="cta-buttons">
+                    <a href="#como-lograrlo" class="banner-cta secondary-cta">VER CONTENIDO</a>
+                </div>
             </div>
         </div>
     </header>
@@ -640,11 +2006,12 @@
     </div>
     
     <!-- Video Principal -->
-    <section class="intro">
+    <section class="intro" id="video">
         <div class="container">
-            <h1>¿Sabías que 45 minutos al día son suficientes para empezar a mejorar tu estado físico y emocional?</h1>
-            <div class="video-container" style="margin-top: 20px; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
-                <video style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);" controls autoplay muted loop>
+            <h1>Mejora tu estado físico y emocional</h1>
+            <p class="section-subtitle">Descubre un enfoque único para transformar tu cuerpo desde casa</p>
+            <div class="video-container">
+                <video controls autoplay muted>
                     <source src="Video/banner-video.mp4" type="video/mp4">
                     Tu navegador no soporta videos HTML5.
                 </video>
@@ -653,120 +2020,69 @@
     </section>
     
     <!-- Beneficios -->
-    <section class="benefits">
+    <section class="benefits" id="que-lograr">
         <div class="container">
             <h2>¿QUÉ VAS A LOGRAR?</h2>
-            <div class="benefits-container">
-                <div class="benefit-item">
-                    <i class="fas fa-piggy-bank"></i>
-                    <p>Ahorrarás mucho dinero en DIETAS y GIMNASIOS.</p>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-heart"></i>
-                    <p>Mejorarás tu estado físico con un programa que te ayudará a darle a tu vida más energía reduciendo niveles de depresión y ansiedad.</p>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-users"></i>
-                    <p>Tendrás dos entrenadores profesionales de manera virtual que te ayudarán a lograr tus objetivos.</p>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-clock"></i>
-                    <p>Ahorrarás muchísimo tiempo usando nuestro entrenamiento de tan solo 45 minutos al día.</p>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-home"></i>
-                    <p>Aprenderás a ser recursivo y usar los elementos de tu hogar para hacer nuestros entrenamientos.</p>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-tshirt"></i>
-                    <p>Podrás entrenar con la ropa que desees; deportiva e Incluso con tu pijama.</p>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-mobile-alt"></i>
-                    <p>Podrás tener al alcance de tu mano un teléfono o una computadora.</p>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check-circle"></i>
-                    <p>El tiempo, el dinero y el lugar dejarán de ser un problema para ti a la hora de lograr tus objetivos corporales.</p>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-tools"></i>
-                    <p>Tendrás las herramientas necesarias, para lograr tus objetivos físicos, adquirir hábitos más saludables y mejorar tu salud gracias a su entrenamiento.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Testimonios -->
-    <section class="testimonials">
-        <div class="container">
-            <h2>TESTIMONIOS DE NUESTROS ALUMNOS</h2>
+            <p class="section-subtitle">Beneficios que transformarán tu vida y tu cuerpo</p>
             
-            <div class="testimonial-container">
-                <button class="prev-btn"><i class="fas fa-chevron-left"></i></button>
+            <div class="benefits-slider-container">
+                <button class="benefits-nav-button benefits-prev"><i class="fas fa-chevron-left"></i></button>
                 
-                <div class="testimonial-slide active">
-                    <img src="img/testimonio1.jpg" alt="Zenaida Rodríguez" class="testimonial-image">
-                    <p class="testimonial-text">"Dure casi dos años en un gimnasio y nunca había obtenido los resultados tan maravillosos que tengo ahora, he bajado más de 4 kilos entrenando con <strong>Natalia</strong> y <strong>Cristian</strong>"</p>
-                    <div class="testimonial-name">ZENAIDA RODRIGUEZ</div>
+                <div class="benefits-slider">
+                    <div class="benefit-item">
+                        <i class="fas fa-piggy-bank"></i>
+                        <p>Ahorrarás mucho dinero en DIETAS y GIMNASIOS.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-heart"></i>
+                        <p>Mejorarás tu estado físico con un programa que te ayudará a darle a tu vida más energía reduciendo niveles de depresión y ansiedad.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-users"></i>
+                        <p>Tendrás dos entrenadores profesionales de manera virtual que te ayudarán a lograr tus objetivos.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-clock"></i>
+                        <p>Ahorrarás muchísimo tiempo usando nuestro entrenamiento de tan solo 45 minutos al día.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-home"></i>
+                        <p>Aprenderás a ser recursivo y usar los elementos de tu hogar para hacer nuestros entrenamientos.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-tshirt"></i>
+                        <p>Podrás entrenar con la ropa que desees; deportiva e Incluso con tu pijama.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <p>Podrás tener al alcance de tu mano un teléfono o una computadora.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-check-circle"></i>
+                        <p>El tiempo, el dinero y el lugar dejarán de ser un problema para ti a la hora de lograr tus objetivos corporales.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-tools"></i>
+                        <p>Tendrás las herramientas necesarias, para lograr tus objetivos físicos, adquirir hábitos más saludables y mejorar tu salud gracias a su entrenamiento.</p>
+                    </div>
                 </div>
                 
-                <div class="testimonial-slide">
-                    <img src="img/testimonio2.jpg" alt="Yolanda Arias" class="testimonial-image">
-                    <p class="testimonial-text">"Estoy muy feliz de poder hacer los ejercicios desde mi casa, ya bajé mas de 5 kilos y me gusta que <strong>Natalia</strong> y <strong>Cristian</strong> siempre están pendientes de que uno haga bien los ejercicios."</p>
-                    <div class="testimonial-name">YOLANDA ARIAS</div>
-                </div>
+                <button class="benefits-nav-button benefits-next"><i class="fas fa-chevron-right"></i></button>
                 
-                <div class="testimonial-slide">
-                    <img src="img/testimonio3.jpg" alt="Eliana Herrera" class="testimonial-image">
-                    <p class="testimonial-text">"Llevaba mas de 10 años sin hacer ejercicio y empecé con rutinas suaves desde mi casa entrenando con <strong>Natalia</strong> y <strong>Cristian</strong> y la verdad me siento feliz, les recomiendo el entrenamiento de verdad vale la pena."</p>
-                    <div class="testimonial-name">ELIANA HERRERA</div>
-                </div>
-                
-                <div class="testimonial-slide">
-                    <img src="img/testimonio4.jpg" alt="David Monroy" class="testimonial-image">
-                    <p class="testimonial-text">"Le agradezco mucho a <strong>Cristian</strong> y <strong>Natalia</strong> por los entrenamientos, son muy duros, nos exigen bastante y me gusta mucho que los puedo hacer desde mi casa, muy recomendado su programa de ejercicios"</p>
-                    <div class="testimonial-name">DAVID MONROY</div>
-                </div>
-                
-                <div class="testimonial-slide">
-                    <img src="img/testimonio5.jpg" alt="Mary Herrera" class="testimonial-image">
-                    <p class="testimonial-text">"Los ejercicios con <strong>Cristian</strong> y <strong>Natalia</strong> son geniales me gusta que lo puedo hacer desde mi sala, mi habitación, en el jardín y donde yo quiera, me han ayudado bastante, me siento más fuerte, con más resistencia y muy pero muy feliz. Lo recomiendo 100%"</p>
-                    <div class="testimonial-name">MARY HERRERA</div>
-                </div>
-                
-                <div class="testimonial-slide">
-                    <img src="img/testimonio6.jpg" alt="Carlos Méndez" class="testimonial-image">
-                    <p class="testimonial-text">"Increíble lo que he logrado en tan solo 2 meses. Perdí 7 kilos y gané masa muscular con solo 45 minutos diarios. La flexibilidad de horarios me permite entrenar cuando mi agenda lo permite y los resultados han superado mis expectativas."</p>
-                    <div class="testimonial-name">CARLOS MÉNDEZ</div>
-                </div>
-                
-                <div class="testimonial-slide">
-                    <img src="img/testimonio7.jpg" alt="Laura Gómez" class="testimonial-image">
-                    <p class="testimonial-text">"Después de mi embarazo, no encontraba tiempo para ir al gimnasio. Gracias a este programa he recuperado mi figura y mi energía. Entreno mientras mi bebé duerme y los resultados son asombrosos. ¡No podría estar más feliz!"</p>
-                    <div class="testimonial-name">LAURA GÓMEZ</div>
-                </div>
-                
-                <button class="next-btn"><i class="fas fa-chevron-right"></i></button>
-                
-                <div class="slider-controls">
-                    <span class="slider-dot active" data-slide="0"></span>
-                    <span class="slider-dot" data-slide="1"></span>
-                    <span class="slider-dot" data-slide="2"></span>
-                    <span class="slider-dot" data-slide="3"></span>
-                    <span class="slider-dot" data-slide="4"></span>
-                    <span class="slider-dot" data-slide="5"></span>
-                    <span class="slider-dot" data-slide="6"></span>
+                <div class="benefits-indicator-dots">
+                    <span class="benefits-dot active" data-slide="0"></span>
+                    <span class="benefits-dot" data-slide="1"></span>
+                    <span class="benefits-dot" data-slide="2"></span>
                 </div>
             </div>
         </div>
     </section>
     
-    <!-- Cómo lo vas a lograr -->
+    <!-- Cómo lo vas a lograr (MOVIDO AL LUGAR DE LOS TESTIMONIOS) -->
     <section class="levels" id="como-lograrlo">
         <div class="container">
             <h2>¿CÓMO LO VAS A LOGRAR?</h2>
-            <p>Con un método de entrenamiento comprobado de tan sólo 45 minutos al día/5 días a la semana desde la comodidad de tu casa.</p>
+            <p class="section-subtitle">Con un método de entrenamiento comprobado de tan sólo 45 minutos al día/5 días a la semana</p>
             
             <div class="level-container">
                 <div class="level-row">
@@ -801,44 +2117,158 @@
         </div>
     </section>
     
-    <!-- Bonus -->
-    <section class="bonus">
+    <!-- Testimonios -->
+    <section class="testimonials" id="testimonios">
         <div class="container">
-            <h2>Y un Bonus especial de 10 clases de regalo</h2>
+            <h2>TESTIMONIOS DE NUESTROS ALUMNOS</h2>
+            <p class="section-subtitle">Lo que dicen las personas que ya están transformando sus vidas</p>
             
+            <div class="testimonial-container">
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio1.jpg" alt="Zenaida Rodríguez" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"Duré casi dos años en un gimnasio y nunca había obtenido los resultados tan maravillosos que tengo ahora, he bajado más de 4 kilos entrenando con <strong>Natalia</strong> y <strong>Cristian</strong>"</p>
+                        <div class="testimonial-name">ZENAIDA RODRIGUEZ</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio2.jpg" alt="Yolanda Arias" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"Estoy muy feliz de poder hacer los ejercicios desde mi casa, ya bajé más de 5 kilos y me gusta que <strong>Natalia</strong> y <strong>Cristian</strong> siempre están pendientes de que uno haga bien los ejercicios."</p>
+                        <div class="testimonial-name">YOLANDA ARIAS</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio3.jpg" alt="Eliana Herrera" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"Llevaba más de 10 años sin hacer ejercicio y empecé con rutinas suaves desde mi casa entrenando con <strong>Natalia</strong> y <strong>Cristian</strong> y la verdad me siento feliz, les recomiendo el entrenamiento de verdad vale la pena."</p>
+                        <div class="testimonial-name">ELIANA HERRERA</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio4.jpg" alt="David Monroy" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"Le agradezco mucho a <strong>Cristian</strong> y <strong>Natalia</strong> por los entrenamientos, son muy duros, nos exigen bastante y me gusta mucho que los puedo hacer desde mi casa, muy recomendado su programa de ejercicios"</p>
+                        <div class="testimonial-name">DAVID MONROY</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio5.jpg" alt="Mary Herrera" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"Los ejercicios con <strong>Cristian</strong> y <strong>Natalia</strong> son geniales me gusta que lo puedo hacer desde mi sala, mi habitación, en el jardín y donde yo quiera, me han ayudado bastante, me siento más fuerte, con más resistencia y muy pero muy feliz. Lo recomiendo 100%"</p>
+                        <div class="testimonial-name">MARY HERRERA</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio6.jpg" alt="Carlos Méndez" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"Increíble lo que he logrado en tan solo 2 meses. Perdí 7 kilos y gané masa muscular con solo 45 minutos diarios. La flexibilidad de horarios me permite entrenar cuando mi agenda lo permite y los resultados han superado mis expectativas."</p>
+                        <div class="testimonial-name">CARLOS MÉNDEZ</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio7.jpg" alt="Laura Gómez" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"Después de mi embarazo, no encontraba tiempo para ir al gimnasio. Gracias a este programa he recuperado mi figura y mi energía. Entreno mientras mi bebé duerme y los resultados son asombrosos. ¡No podría estar más feliz!"</p>
+                        <div class="testimonial-name">LAURA GÓMEZ</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio8.jpeg" alt="Roberto Sánchez" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"A mis 52 años pensé que era imposible recuperar mi forma física. Con este programa logré bajar 10 kilos en 3 meses sin salir de casa. Los entrenadores son excelentes y las rutinas están adaptadas a cualquier nivel de condición física."</p>
+                        <div class="testimonial-name">ROBERTO SÁNCHEZ</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio9.jpeg" alt="Sofía Martínez" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"Nunca pensé que podría entrenar eficazmente sin equipamiento profesional. Este programa me demostró lo contrario. Con objetos de mi casa y 45 minutos diarios, he logrado resultados que no conseguí en años de gimnasio."</p>
+                        <div class="testimonial-name">SOFÍA MARTÍNEZ</div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-slide">
+                    <div class="testimonial-card">
+                        <img src="img/testimonio10.jpeg" alt="Javier Ramírez" class="testimonial-image">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-text">"Las rutinas son perfectas para mi apretada agenda. Sin desplazamientos al gimnasio, aprovecho mejor mi tiempo y los resultados son evidentes. En 2 meses he transformado mi cuerpo y aumentado considerablemente mi energía diaria."</p>
+                        <div class="testimonial-name">JAVIER RAMÍREZ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Bonus -->
+    <section class="bonus-section" id="bonus">
+        <div class="container">
+            <h2><i class="fas fa-gift"></i> BONUS ESPECIAL: 10 CLASES DE REGALO</h2>
             <div class="bonus-container">
-                <div class="bonus-item">
-                    <div class="bonus-title">BONO DE BAILE</div>
-                    <p>Aquí te compartiremos nuestra experiencia como bailarines profesionales en donde te divertirás y aprenderás pasos básicos de diferentes géneros musicales. (3 clases de baile)</p>
-                </div>
-                
-                <div class="bonus-item">
-                    <div class="bonus-title">BONO PARA MUJERES EN EMBARAZO</div>
-                    <p>Exclusivo para las futuras mamitas que quieren mantenerse activas durante esta bella etapa, donde trabajaras distintos grupos musculares. (3 clases)</p>
-                </div>
-                
-                <div class="bonus-item">
-                    <div class="bonus-title">BONO PARA EL ADULTO MAYOR</div>
-                    <p>Con ejercicios sencillos donde fortalecerás todos los grupos musculares, ayudándote a prevenir dolores y molestias físicas. (2 clases)</p>
-                </div>
-                
-                <div class="bonus-item">
-                    <div class="bonus-title">BONO DE ESTIRAMIENTO</div>
-                    <p>Ejercicios muy efectivos para elongar tu cuerpo y así evitar lesiones o dolores físicos a futuro. (2 clases; básica y avanzada)</p>
+                <div class="bonus-row">
+                    <div class="bonus-item">
+                        <div class="bonus-icon"><i class="fas fa-music"></i></div>
+                        <div class="bonus-title">BAILE</div>
+                        <div class="bonus-count">3 clases</div>
+                    </div>
+                    <div class="bonus-item">
+                        <div class="bonus-icon"><i class="fas fa-baby"></i></div>
+                        <div class="bonus-title">EMBARAZO</div>
+                        <div class="bonus-count">3 clases</div>
+                    </div>
+                    <div class="bonus-item">
+                        <div class="bonus-icon"><i class="fas fa-user-friends"></i></div>
+                        <div class="bonus-title">ADULTO MAYOR</div>
+                        <div class="bonus-count">2 clases</div>
+                    </div>
+                    <div class="bonus-item">
+                        <div class="bonus-icon"><i class="fas fa-running"></i></div>
+                        <div class="bonus-title">ESTIRAMIENTO</div>
+                        <div class="bonus-count">2 clases</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
     
     <!-- Acerca de -->
-    <section class="about">
+    <section class="about" id="about">
         <div class="container">
             <h2>ACERCA DE LA PRODUCTORA</h2>
-            <p>Desarrollado por <strong>NATALIA ALARCÓN</strong> Y <strong>CRISTIAN ESPINOSA</strong> artistas, bailarines y entrenadores profesionales amantes de la actividad física, con un gran recorrido internacional compartiendo su conocimiento con personas de todas las edades, desde niños, adolescentes, adultos y adultos mayores, en países como <strong>CHINA</strong>- <strong>KOREA DEL SUR</strong> – <strong>MÉXICO</strong> –<strong>ITALIA</strong>- <strong>FRANCIA</strong>- <strong>TURQUIA</strong> y <strong>U.S.A</strong>, entre otros.</p>
+            <p class="section-subtitle">Conoce a tus entrenadores personales</p>
+            <div class="about-content">
+                <p>Desarrollado por <strong>NATALIA ALARCÓN</strong> Y <strong>CRISTIAN ESPINOSA</strong> artistas, bailarines y entrenadores profesionales amantes de la actividad física, con un gran recorrido internacional compartiendo su conocimiento con personas de todas las edades, desde niños, adolescentes, adultos y adultos mayores, en países como <strong>CHINA</strong>- <strong>KOREA DEL SUR</strong> – <strong>MÉXICO</strong> –<strong>ITALIA</strong>- <strong>FRANCIA</strong>- <strong>TURQUIA</strong> y <strong>U.S.A</strong>, entre otros.</p>
+            </div>
         </div>
     </section>
     
-    <!-- Precio y CTA (Widget) -->
+    <!-- Certificado (MOVIDO AL LUGAR DEL WIDGET DEL PRECIO) -->
+    <section class="certificate">
+        <div class="container">
+            <h3 class="certificate-title">Recibe tu certificado al completar el programa</h3>
+            <p class="certificate-subtitle">Reconocimiento oficial por tu dedicación y logros</p>
+            <img src="img/CERTIFICADO.jpg" alt="Certificado del programa" class="certificate-image">
+        </div>
+    </section>
+    
+    <!-- Precio y CTA (MOVIDO AL LUGAR DEL CERTIFICADO) -->
     <section class="pricing">
         <div class="container">
             <div class="price-widget">
@@ -847,11 +2277,13 @@
                     <img src="img/fitness-image.jpg" alt="Resultado del programa" class="price-image">
                 </div>
                 <div class="price-widget-body">
+                    <h3 class="price-widget-title">Transforma tu cuerpo desde casa</h3>
+                    <p class="price-widget-subtitle">Inversión única para resultados permanentes</p>
                     <div class="price-comparison">
-                        <span class="price-old">$199.99</span>
-                        <span class="price-save">Ahorras 44%</span>
+                        <span class="price-old">$169.00</span>
+                        <span class="price-save">Ahorras 47%</span>
                     </div>
-                    <div class="price"><span class="price-currency">$</span>111<span class="price-decimal">.32</span></div>
+                    <div class="price"><span class="price-currency">$</span>90<span class="price-decimal">.00</span></div>
                     <div class="price-features">
                         <div class="price-feature"><i class="fas fa-check-circle"></i> Acceso a todas las clases</div>
                         <div class="price-feature"><i class="fas fa-check-circle"></i> 10 clases de regalo</div>
@@ -863,28 +2295,121 @@
         </div>
     </section>
     
-    <!-- Certificado -->
-    <section class="certificate">
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faqs">
         <div class="container">
-            <img src="img/certificado.jpg" alt="Certificado del programa" class="certificate-image">
+            <h2>PREGUNTAS FRECUENTES</h2>
+            <p class="section-subtitle">Todo lo que necesitas saber sobre nuestro programa</p>
+            <div class="faq-items">
+                <!-- Los ítems de FAQ se añadirán aquí dinámicamente -->
+            </div>
         </div>
     </section>
+
+    <!-- Chatbot flotante -->
+    <div class="floating-chat-container">
+        <div class="chat-bubble" id="chatBubble">
+            <i class="fas fa-comment"></i>
+            <span class="notification-badge">1</span>
+        </div>
+        <div class="chat-popup" id="chatPopup">
+            ¡Hola! 👋 ¿Necesitas ayuda con el programa?
+        </div>
+        <div class="floating-chat-box" id="floatingChatBox">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <h3>Tu Asistente Digital</h3>
+                    <p>Estamos para ayudarte</p>
+                </div>
+                <button class="close-chat-btn" id="closeChat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-body">
+                <!-- Los mensajes del chat se añadirán aquí dinámicamente -->
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="suggestion-chips">
+                <!-- Las sugerencias se añadirán aquí dinámicamente -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="message-input" placeholder="Escribe tu pregunta aquí...">
+                <button class="send-button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
     
     <!-- Footer -->
     <footer>
         <div class="container">
             <img src="img/logo.jpg" alt="Adelgaza sin Salir de Casa" class="footer-logo">
-            <div class="copyright">&copy; 2025 SPMarketing - Agency todos los derechos reservados</div>
-            <a href="https://t.me/SPMarketing_KR" class="telegram-button" target="_blank"><i class="fab fa-telegram"></i>Contáctanos en Telegram</a>
+            
+            <div class="footer-links">
+                <div class="footer-section">
+                    <h4>Navegación</h4>
+                    <ul>
+                        <li><a href="#banner">Inicio</a></li>
+                        <li><a href="#que-lograr">¿Qué vas a lograr?</a></li>
+                        <li><a href="#como-lograrlo">¿Cómo lo vas a lograr?</a></li>
+                        <li><a href="#testimonios">Testimonios</a></li>
+                        <li><a href="#about">Acerca de</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Recursos</h4>
+                    <ul>
+                        <li><a href="#faqs">Preguntas frecuentes</a></li>
+                        <li><a href="./cuestionario">Cuestionario</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="./politicas-privacidad.html">Políticas de Privacidad</a></li>
+                        <li><a href="./terminos-condiciones.html">Términos y Condiciones</a></li>
+                        <li><a href="./politica-cookies.html">Política de Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">&copy; 2025 SPMarketing – ImpactoDigital - todos los derechos reservados</div>
+            <a href="mailto:hristiankrasimirov7@gmail.com?subject=Adelgaza%20sin%20Salir%20de%20Casa" class="contact-button" target="_blank"><i class="far fa-envelope"></i> Contáctanos</a>
         </div>
     </footer>
     
+    <!-- Aviso de Cookies -->
+    <div class="cookie-consent" id="cookieConsent">
+        <div class="cookie-content">
+            <p>Este sitio web utiliza cookies para mejorar tu experiencia. <a href="./politica-cookies.html">Más información</a></p>
+            <div class="cookie-buttons">
+                <button id="cookieAccept" class="cookie-button accept">Aceptar</button>
+                <button id="cookieDecline" class="cookie-button decline">Rechazar</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Scripts -->
     <script>
-        // Función para manejar el temporizador flotante al hacer scroll
+        // Menú de navegación y scroll
         window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
             const timerContainer = document.querySelector('.timer-container');
             const scrollPosition = window.scrollY;
+            
+            // Menú de navegación - cambiar estilo al hacer scroll
+            if (scrollPosition > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
             
             // Ajustar la posición del temporizador según el scroll
             if (scrollPosition > 300) {
@@ -892,6 +2417,13 @@
             } else {
                 timerContainer.style.top = '30%';
             }
+        });
+        
+        // Toggle para el menú móvil
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach(bar => bar.classList.toggle('active'));
         });
         
         // Función para establecer una cookie
@@ -969,78 +2501,536 @@
             }, 1000);
         }
         
-        // Slider de testimonios
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.testimonial-slide');
-        const dots = document.querySelectorAll('.slider-dot');
+        // Testimonios carrusel con desaparición automática
+        const testimonialSlides = document.querySelectorAll('.testimonial-slide');
+        let currentTestimonial = 0;
         
-        function showSlide(n) {
-            // Ocultar todas las diapositivas
-            slides.forEach(slide => {
-                slide.classList.remove('active');
+        function showTestimonial(index) {
+            // Ocultar todos los testimonios
+            testimonialSlides.forEach(slide => {
+                slide.style.display = 'none';
             });
             
-            // Desactivar todos los puntos
-            dots.forEach(dot => {
-                dot.classList.remove('active');
+            // Mostrar el testimonio actual
+            testimonialSlides[index].style.display = 'block';
+            testimonialSlides[index].style.opacity = '0';
+            
+            // Animación de aparición suave
+            setTimeout(() => {
+                testimonialSlides[index].style.opacity = '1';
+            }, 100);
+        }
+        
+        function nextTestimonial() {
+            currentTestimonial = (currentTestimonial + 1) % testimonialSlides.length;
+            showTestimonial(currentTestimonial);
+        }
+        
+        // Slider de beneficios
+        const benefitsSlider = document.querySelector('.benefits-slider');
+        const benefitItems = document.querySelectorAll('.benefit-item');
+        const benefitDots = document.querySelectorAll('.benefits-dot');
+        const benefitPrev = document.querySelector('.benefits-prev');
+        const benefitNext = document.querySelector('.benefits-next');
+        let currentBenefitSlide = 0;
+        const benefitsItemsPerSlide = window.innerWidth < 768 ? 1 : 3;
+        const benefitsTotalSlides = Math.ceil(benefitItems.length / benefitsItemsPerSlide);
+        
+        function showBenefitSlide(index) {
+            // Validar índice
+            if (index < 0) index = 0;
+            if (index >= benefitsTotalSlides) index = benefitsTotalSlides - 1;
+            
+            currentBenefitSlide = index;
+            
+            // Calcular desplazamiento
+            const slideWidth = benefitItems[0].offsetWidth + 30; // añadir margen
+            const offset = -currentBenefitSlide * slideWidth * benefitsItemsPerSlide;
+            
+            // Aplicar transformación
+            benefitsSlider.style.transform = `translateX(${offset}px)`;
+            
+            // Actualizar indicadores
+            benefitDots.forEach(dot => dot.classList.remove('active'));
+            benefitDots[currentBenefitSlide].classList.add('active');
+        }
+        
+        // Eventos para los botones de navegación de beneficios
+        if (benefitPrev && benefitNext) {
+            benefitPrev.addEventListener('click', () => {
+                showBenefitSlide(currentBenefitSlide - 1);
             });
             
-            // Mostrar la diapositiva actual y activar el punto correspondiente
-            slides[n].classList.add('active');
-            dots[n].classList.add('active');
-        }
-        
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % slides.length;
-            showSlide(currentSlide);
-        }
-        
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-            showSlide(currentSlide);
-        }
-        
-        // Event listeners para los botones y puntos
-        document.querySelector('.next-btn').addEventListener('click', nextSlide);
-        document.querySelector('.prev-btn').addEventListener('click', prevSlide);
-        
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                currentSlide = index;
-                showSlide(currentSlide);
+            benefitNext.addEventListener('click', () => {
+                showBenefitSlide(currentBenefitSlide + 1);
             });
-        });
+            
+            // Configurar eventos de clic en los puntos de beneficios
+            benefitDots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    showBenefitSlide(index);
+                });
+            });
+        }
         
-        // Cambiar automáticamente cada 5 segundos
-        setInterval(nextSlide, 5000);
-        
-        // Implementar scroll suave para el botón "VER CONTENIDO"
+        // Implementar scroll suave para los enlaces del menú
         document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
             const verContenidoBtn = document.querySelector('a[href="#como-lograrlo"]');
             
-            if (verContenidoBtn) {
-                verContenidoBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetSection = document.querySelector(this.getAttribute('href'));
+            function scrollToSection(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    // Cerrar el menú móvil si está abierto
+                    document.querySelector('.nav-links').classList.remove('active');
                     
-                    if (targetSection) {
-                        window.scrollTo({
-                            top: targetSection.offsetTop,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 70, // Ajustar por la altura del menú
+                        behavior: 'smooth'
+                    });
+                }
+            }
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', scrollToSection);
+            });
+            
+            if (verContenidoBtn) {
+                verContenidoBtn.addEventListener('click', scrollToSection);
+            }
+            
+            // Inicializar testimonios
+            showTestimonial(currentTestimonial);
+            
+            // Inicializar slider de beneficios si existe
+            if (benefitsSlider) {
+                showBenefitSlide(currentBenefitSlide);
             }
         });
         
         window.onload = function () {
+            // Iniciar el temporizador
             const twentyFiveMinutes = 25 * 60,
                 display = document.querySelector('#countdown');
             startCountdown(twentyFiveMinutes, display);
             
-            // Inicializar el slider
-            showSlide(currentSlide);
+            // Inicializar el carrusel de testimonios
+            showTestimonial(currentTestimonial);
+            
+            // Cambiar automáticamente cada 10 segundos
+            setInterval(nextTestimonial, 10000);
+            
+            // Configurar el video para que se reproduzca automáticamente una sola vez
+            const video = document.querySelector('video');
+            if (video) {
+                video.onended = function() {
+                    this.pause();
+                    this.currentTime = 0;
+                };
+            }
         };
+
+        // Chatbot Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatBody = document.querySelector('.chat-body');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.querySelector('.send-button');
+            const typingIndicator = document.querySelector('.typing-indicator');
+            const suggestionChips = document.querySelector('.suggestion-chips');
+            const faqItems = document.querySelector('.faq-items');
+            const chatBubble = document.getElementById('chatBubble');
+            const floatingChatBox = document.getElementById('floatingChatBox');
+            const closeChat = document.getElementById('closeChat');
+            const chatPopup = document.getElementById('chatPopup');
+            const timerContainer = document.querySelector('.timer-container');
+            
+            // Control del chatbot flotante
+            chatBubble.addEventListener('click', function() {
+                floatingChatBox.classList.toggle('active');
+                // Ocultar la notificación y el popup al abrir el chat
+                document.querySelector('.notification-badge').style.display = 'none';
+                chatPopup.style.display = 'none';
+                
+                // Ajustar posición del timer cuando el chat está abierto
+                if (floatingChatBox.classList.contains('active')) {
+                    adjustTimerPosition(true);
+                } else {
+                    adjustTimerPosition(false);
+                }
+            });
+            
+            closeChat.addEventListener('click', function() {
+                floatingChatBox.classList.remove('active');
+                // Restaurar posición del timer cuando el chat se cierra
+                adjustTimerPosition(false);
+            });
+            
+            // Función para ajustar posición del timer
+            function adjustTimerPosition(chatIsOpen) {
+                if (window.innerWidth <= 768) {
+                    if (chatIsOpen) {
+                        timerContainer.style.bottom = '430px';
+                    } else {
+                        timerContainer.style.bottom = '80px';
+                    }
+                } else {
+                    // En dispositivos más grandes, mantener posición original
+                    timerContainer.style.bottom = 'auto';
+                    timerContainer.style.top = '30%';
+                }
+            }
+            
+            // Datos de ejemplo para preguntas frecuentes
+            const faqData = [
+                {
+                    question: "¿Cuánto tiempo debo dedicar cada día al programa?",
+                    answer: "Solo necesitas 45 minutos al día, 5 días a la semana. Nuestras rutinas están diseñadas para ser efectivas y eficientes."
+                },
+                {
+                    question: "¿Necesito equipamiento especial?",
+                    answer: "No, nuestro programa está diseñado para usar objetos comunes que ya tienes en casa. Te enseñamos a ser recursivo con lo que tienes a mano."
+                },
+                {
+                    question: "¿Funciona para todas las edades?",
+                    answer: "Sí, tenemos niveles desde básico hasta avanzado y clases especiales para embarazadas y adultos mayores."
+                },
+                {
+                    question: "¿Cuánto tiempo tardaré en ver resultados?",
+                    answer: "La mayoría de nuestros alumnos comienzan a ver resultados en las primeras 3-4 semanas, siempre que sigan el programa con constancia."
+                },
+                {
+                    question: "¿Qué pasa si me pierdo una clase?",
+                    answer: "No hay problema, tienes acceso a todas las clases de por vida y puedes tomarlas cuando mejor te convenga."
+                },
+                {
+                    question: "¿El programa incluye plan de alimentación?",
+                    answer: "El programa se enfoca principalmente en ejercicios, pero incluimos consejos generales de alimentación saludable. Para un plan nutricional detallado, recomendamos consultar con un nutricionista."
+                },
+                {
+                    question: "¿Puedo hacer el programa si tengo lesiones?",
+                    answer: "Depende de la lesión. Ofrecemos adaptaciones para muchos ejercicios, y tenemos rutinas especiales para adultos mayores y embarazadas. Sin embargo, siempre recomendamos consultar con tu médico antes de comenzar."
+                },
+                {
+                    question: "¿Cómo es el método de pago?",
+                    answer: "Aceptamos pagos seguros a través de tarjetas de crédito, débito y PayPal. Todas las transacciones están protegidas con encriptación."
+                }
+            ];
+            
+            // Datos de ejemplo para sugerencias iniciales y contextuales
+            const suggestionCategories = {
+                initial: [
+                    "¿Cómo empiezo?",
+                    "Precios",
+                    "Beneficios",
+                    "Niveles del programa",
+                    "Testimonios"
+                ],
+                pricing: [
+                    "¿Cómo puedo pagar?",
+                    "¿Hay promociones?",
+                    "¿Puedo cancelar?",
+                    "¿Qué incluye el precio?"
+                ],
+                workout: [
+                    "¿Cuánto duran las rutinas?",
+                    "¿Necesito equipo?",
+                    "¿Es para principiantes?",
+                    "¿Veré resultados rápido?"
+                ],
+                nutrition: [
+                    "¿Incluye plan de comidas?",
+                    "¿Qué debo comer?",
+                    "¿Hay dietas restrictivas?",
+                    "¿Tengo que tomar suplementos?"
+                ],
+                results: [
+                    "Ver testimonios",
+                    "¿Cuánto peso puedo perder?",
+                    "¿Cuánto tiempo tarda?",
+                    "¿Funcionará para mí?"
+                ],
+                support: [
+                    "¿Cómo contacto al equipo?",
+                    "¿Hay asesoramiento?",
+                    "¿Puedo hablar con entrenadores?",
+                    "Tengo una duda específica"
+                ]
+            };
+            
+            // Cargar las sugerencias según la categoría
+            function loadSuggestions(category = 'initial') {
+                suggestionChips.innerHTML = '';
+                const chips = suggestionCategories[category] || suggestionCategories.initial;
+                
+                // Limitar a máximo 4 sugerencias visibles para evitar desplazamiento
+                const displayChips = chips.slice(0, 4);
+                
+                displayChips.forEach(suggestion => {
+                    const chip = document.createElement('div');
+                    chip.className = 'suggestion-chip';
+                    chip.textContent = suggestion;
+                    chip.addEventListener('click', () => {
+                        sendMessage(suggestion);
+                    });
+                    suggestionChips.appendChild(chip);
+                });
+            }
+            
+            // Actualizar sugerencias basadas en la conversación
+            function updateSuggestions(message) {
+                message = message.toLowerCase();
+                
+                if (message.includes('precio') || message.includes('costo') || message.includes('pago') || message.includes('tarifa')) {
+                    loadSuggestions('pricing');
+                } 
+                else if (message.includes('ejercicio') || message.includes('rutina') || message.includes('entrenamiento') || message.includes('clase')) {
+                    loadSuggestions('workout');
+                }
+                else if (message.includes('comida') || message.includes('dieta') || message.includes('alimentación') || message.includes('comer') || message.includes('nutrición')) {
+                    loadSuggestions('nutrition');
+                }
+                else if (message.includes('resultado') || message.includes('adelgazar') || message.includes('perder peso') || message.includes('testimonio')) {
+                    loadSuggestions('results');
+                }
+                else if (message.includes('ayuda') || message.includes('contacto') || message.includes('problema') || message.includes('duda')) {
+                    loadSuggestions('support');
+                }
+                else {
+                    // Si no coincide con ninguna categoría específica, mostrar sugerencias iniciales
+                    loadSuggestions('initial');
+                }
+            }
+            
+            // Mensaje inicial del bot
+            function addInitialMessage() {
+                setTimeout(() => {
+                    // Mostrar indicador de escritura primero
+                    typingIndicator.style.display = 'block';
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                    
+                    // Después de 3 segundos mostrar el mensaje
+                    setTimeout(() => {
+                        typingIndicator.style.display = 'none';
+                        addMessage("¡Hola! 👋 Soy Tu Asistente Digital de Adelgaza sin Salir de Casa. ¿En qué puedo ayudarte hoy?", "bot");
+                    }, 3000);
+                }, 500);
+            }
+            
+            // Cargar las preguntas frecuentes
+            function loadFAQs() {
+                faqData.forEach(item => {
+                    const faqItem = document.createElement('div');
+                    faqItem.className = 'faq-item';
+                    
+                    const question = document.createElement('div');
+                    question.className = 'faq-question';
+                    question.textContent = item.question;
+                    
+                    const answer = document.createElement('div');
+                    answer.className = 'faq-answer';
+                    answer.textContent = item.answer;
+                    
+                    faqItem.appendChild(question);
+                    faqItem.appendChild(answer);
+                    
+                    // Añadir evento para expandir/contraer
+                    question.addEventListener('click', () => {
+                        answer.classList.toggle('open');
+                        question.classList.toggle('active');
+                    });
+                    
+                    faqItems.appendChild(faqItem);
+                });
+            }
+            
+            // Enviar mensaje
+            function sendMessage(message) {
+                // Si el mensaje viene de un clic, usamos ese texto
+                // Si no, tomamos el valor del input
+                const messageText = message || messageInput.value.trim();
+                
+                if (!messageText) return;
+                
+                // Agregar mensaje del usuario
+                addMessage(messageText, 'user');
+                
+                // Limpiar el input
+                if (!message) {
+                    messageInput.value = '';
+                }
+                
+                // Actualizar las sugerencias basadas en el mensaje del usuario
+                updateSuggestions(messageText);
+                
+                // Mostrar indicador de escritura
+                typingIndicator.style.display = 'block';
+                chatBody.scrollTop = chatBody.scrollHeight;
+                
+                // Simular respuesta del bot (con retraso de 3 segundos)
+                setTimeout(() => {
+                    // Generar respuesta según la pregunta
+                    let response = getBotResponse(messageText);
+                    
+                    // Ocultar el indicador de escritura y mostrar respuesta
+                    typingIndicator.style.display = 'none';
+                    addMessage(response, 'bot');
+                }, 3000);
+            }
+            
+            // Función para obtener respuesta del bot según el mensaje del usuario
+            function getBotResponse(message) {
+                message = message.toLowerCase();
+                
+                // Buscar coincidencia en las FAQs
+                const faqMatch = faqData.find(item => 
+                    item.question.toLowerCase().includes(message) || 
+                    message.includes(item.question.toLowerCase())
+                );
+                
+                if (faqMatch) return faqMatch.answer;
+                
+                // Respuestas según palabras clave
+                if (message.includes('precio') || message.includes('costo') || message.includes('valor') || message.includes('cuánto cuesta')) {
+                    return "El programa completo tiene un valor de $90.00 USD, con un descuento del 47% sobre el precio original de $169.00 USD. Incluye acceso de por vida a todas las clases y 10 clases de regalo.";
+                } 
+                else if (message.includes('empiezo') || message.includes('comenzar') || message.includes('iniciar')) {
+                    return "Para comenzar, solo necesitas inscribirte en nuestro programa a través del botón '¡QUIERO INSCRIBIRME AHORA!' que encontrarás en la página. Una vez inscrito, recibirás acceso inmediato a todas las clases organizadas por niveles.";
+                }
+                else if (message.includes('resultado') || message.includes('efecto') || message.includes('funciona')) {
+                    return "Nuestros alumnos comienzan a ver resultados desde las primeras 3-4 semanas. Tenemos testimonios de personas que han perdido entre 4 y 10 kilos siguiendo nuestro programa con constancia. Los resultados varían según el compromiso y condición física inicial.";
+                }
+                else if (message.includes('equipo') || message.includes('materiales') || message.includes('necesito')) {
+                    return "No necesitas equipamiento especial. Nuestro programa está diseñado para usar objetos comunes que ya tienes en tu hogar, como sillas, botellas de agua, o toallas. Te enseñamos a ser recursivo con lo que tienes a mano.";
+                }
+                else if (message.includes('nivel') || message.includes('difícil') || message.includes('intensidad')) {
+                    return "El programa incluye 6 niveles: Básico 1, Básico 2, Intermedio 1, Intermedio 2, Avanzado 1 y Avanzado 2. Cada nivel consta de 5 clases. Puedes comenzar desde el nivel que mejor se adapte a tu condición física actual.";
+                }
+                else if (message.includes('hola') || message.includes('buenas') || message.includes('saludos')) {
+                    return "¡Hola! Gracias por contactarnos. ¿En qué puedo ayudarte con nuestro programa Adelgaza sin Salir de Casa?";
+                }
+                else if (message.includes('gracias') || message.includes('genial') || message.includes('excelente')) {
+                    return "¡De nada! Estamos aquí para ayudarte. ¿Hay algo más en lo que pueda asistirte?";
+                }
+                
+                // Respuesta por defecto
+                return "Gracias por tu pregunta. Para información más detallada sobre el programa, te recomiendo que te inscribas o contactes directamente con nuestro equipo a través del botón de contacto al final de la página.";
+            }
+            
+            // Función para agregar mensajes al chat
+            function addMessage(message, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${sender}-message`;
+                messageElement.textContent = message;
+                
+                // Insertar antes del indicador de escritura
+                chatBody.insertBefore(messageElement, typingIndicator);
+                
+                // Desplazar al final
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+            
+            // Configurar eventos
+            sendButton.addEventListener('click', () => {
+                if (messageInput.value.trim()) {
+                    sendMessage();
+                }
+            });
+            
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && messageInput.value.trim()) {
+                    sendMessage();
+                }
+            });
+            
+            // Mostrar el popup de saludo después de 2 segundos
+            setTimeout(() => {
+                chatPopup.style.display = 'block';
+                
+                // Ocultar el popup después de 10 segundos
+                setTimeout(() => {
+                    if (!floatingChatBox.classList.contains('active')) {
+                        chatPopup.style.display = 'none';
+                    }
+                }, 10000);
+            }, 2000);
+            
+            // Mostrar la notificación después de ocultar el popup
+            setTimeout(() => {
+                // Solo si el chat no está ya abierto
+                if(!floatingChatBox.classList.contains('active')) {
+                    document.querySelector('.notification-badge').style.display = 'flex';
+                }
+            }, 13000); // 13 segundos (después de que desaparezca el popup)
+            
+            // Ajustar posición del timer al cargar la página
+            adjustTimerPosition(false);
+            
+            // Ajustar posición del timer al cambiar el tamaño de la ventana
+            window.addEventListener('resize', function() {
+                adjustTimerPosition(floatingChatBox.classList.contains('active'));
+            });
+            
+            // Inicializar
+            addInitialMessage();
+            loadFAQs();
+            loadSuggestions('initial');
+        });
+        
+        // Gestión de cookies y GDPR
+        function manageCookieConsent() {
+            const cookieConsent = document.getElementById('cookieConsent');
+            const acceptBtn = document.getElementById('cookieAccept');
+            const declineBtn = document.getElementById('cookieDecline');
+            
+            // Comprobar si ya se ha guardado la preferencia de cookies
+            function checkCookieConsent() {
+                if (getCookie('cookie_consent') === '') {
+                    // No hay preferencia guardada, mostrar el aviso
+                    cookieConsent.style.display = 'block';
+                }
+            }
+            
+            // Evento para el botón de aceptar
+            acceptBtn.addEventListener('click', function() {
+                setCookie('cookie_consent', 'accepted', 365); // Guardar por 1 año
+                cookieConsent.style.display = 'none';
+                
+                // Aquí se puede activar el código de análisis/seguimiento
+                enableAnalytics();
+            });
+            
+            // Evento para el botón de rechazar
+            declineBtn.addEventListener('click', function() {
+                setCookie('cookie_consent', 'declined', 365); // Guardar por 1 año
+                cookieConsent.style.display = 'none';
+                
+                // Aquí se puede desactivar el código de análisis/seguimiento
+                disableAnalytics();
+            });
+            
+            // Función para habilitar analíticas
+            function enableAnalytics() {
+                // Aquí iría el código para inicializar Google Analytics u otras herramientas
+                console.log('Analytics enabled');
+            }
+            
+            // Función para deshabilitar analíticas
+            function disableAnalytics() {
+                // Aquí iría el código para deshabilitar el seguimiento
+                console.log('Analytics disabled');
+            }
+            
+            // Comprobar la preferencia al cargar la página
+            checkCookieConsent();
+        }
+        
+        // Ejecutar gestión de cookies cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', manageCookieConsent);
     </script>
+    <!-- Font Awesome para iconos -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>
