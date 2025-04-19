@@ -144,7 +144,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Después de 2 segundos mostrar el mensaje
             setTimeout(() => {
                 typingIndicator.style.display = 'none';
-                addMessage("¡Hola! 👋 Soy Tu Asistente Digital de Adelgaza sin Salir de Casa. ¿En qué puedo ayudarte hoy?", "bot");
+                
+                // Mensaje de bienvenida sin CTA
+                const welcomeMessage = {
+                    text: "¡Hola! 👋 Soy tu Asistente Digital de Adelgaza sin Salir de Casa. Puedo ayudarte a descubrir cómo transformar tu cuerpo desde la comodidad de tu hogar, sin equipamiento especial y con resultados garantizados en 30 días o menos."
+                };
+                
+                addMessage(welcomeMessage, "bot");
             }, 2000);
         }, 500);
     }
@@ -168,6 +174,23 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Añadir evento para expandir/contraer
             question.addEventListener('click', () => {
+                // Cerrar todas las respuestas antes de abrir la nueva
+                const allAnswers = document.querySelectorAll('.faq-answer.open');
+                const allQuestions = document.querySelectorAll('.faq-question.active');
+                
+                allAnswers.forEach(openAnswer => {
+                    if (openAnswer !== answer) {
+                        openAnswer.classList.remove('open');
+                    }
+                });
+                
+                allQuestions.forEach(activeQuestion => {
+                    if (activeQuestion !== question) {
+                        activeQuestion.classList.remove('active');
+                    }
+                });
+                
+                // Abrir/cerrar la respuesta actual
                 answer.classList.toggle('open');
                 question.classList.toggle('active');
             });
@@ -258,46 +281,166 @@ document.addEventListener('DOMContentLoaded', function() {
     function getBotResponse(message) {
         message = message.toLowerCase();
         
+        // Objeto para almacenar tanto la respuesta como la información del CTA
+        let responseData = {
+            text: "",
+            cta: {
+                text: "¡Quiero inscribirme ahora!",
+                link: "#precio",
+                icon: "fa-arrow-right"
+            }
+        };
+        
         // Buscar coincidencia en las FAQs
         const faqMatch = faqData.find(item => 
             item.question.toLowerCase().includes(message) || 
             message.includes(item.question.toLowerCase())
         );
         
-        if (faqMatch) return faqMatch.answer;
+        if (faqMatch) {
+            responseData.text = faqMatch.answer;
+            return responseData;
+        }
         
         // Respuestas según palabras clave
         if (message.includes('precio') || message.includes('costo') || message.includes('valor') || message.includes('cuánto cuesta')) {
-            return "El programa completo tiene un valor de $90.00 USD, con un descuento del 47% sobre el precio original de $169.00 USD. Incluye acceso de por vida a todas las clases, 10 clases de regalo y garantía de 7 días con 100% devolución del dinero sin preguntas.";
+            responseData.text = "El programa completo tiene un valor de $90.00 USD, con un descuento del 47% sobre el precio original de $169.00 USD. Incluye acceso de por vida a todas las clases, 10 clases de regalo y garantía de 7 días con 100% devolución del dinero sin preguntas.";
+            responseData.cta.text = "¡Quiero inscribirme con descuento!";
+            responseData.cta.link = "#precio";
+            responseData.cta.icon = "fa-tag";
         } 
-        else if (message.includes('empiezo') || message.includes('comenzar') || message.includes('iniciar')) {
-            return "Para comenzar, solo necesitas inscribirte en nuestro programa a través del botón '¡QUIERO INSCRIBIRME AHORA!' que encontrarás en la página. Una vez inscrito, recibirás acceso inmediato a todas las clases organizadas por niveles.";
+        else if (message.includes('empiezo') || message.includes('comenzar') || message.includes('iniciar') || message.includes('inscrib')) {
+            responseData.text = "Para comenzar, solo necesitas inscribirte en nuestro programa a través del botón abajo. Una vez inscrito, recibirás acceso inmediato a todas las clases organizadas por niveles.";
+            responseData.cta.text = "¡Inscribirme ahora!";
+            responseData.cta.link = "#precio";
+            responseData.cta.icon = "fa-play";
         }
         else if (message.includes('resultado') || message.includes('efecto') || message.includes('funciona')) {
-            return "Nuestros alumnos comienzan a ver resultados desde las primeras 3-4 semanas. Tenemos testimonios de personas que han perdido entre 4 y 10 kilos siguiendo nuestro programa con constancia. Los resultados varían según el compromiso y condición física inicial.";
+            responseData.text = "Nuestros alumnos comienzan a ver resultados desde las primeras 3-4 semanas. Tenemos testimonios de personas que han perdido entre 4 y 10 kilos siguiendo nuestro programa con constancia. Los resultados varían según el compromiso y condición física inicial.";
+            responseData.cta.text = "Ver testimonios";
+            responseData.cta.link = "#testimonios";
+            responseData.cta.icon = "fa-star";
         }
         else if (message.includes('equipo') || message.includes('materiales') || message.includes('necesito')) {
-            return "No necesitas equipamiento especial. Nuestro programa está diseñado para usar objetos comunes que ya tienes en tu hogar, como sillas, botellas de agua, o toallas. Te enseñamos a ser recursivo con lo que tienes a mano.";
+            responseData.text = "No necesitas equipamiento especial. Nuestro programa está diseñado para usar objetos comunes que ya tienes en tu hogar, como sillas, botellas de agua, o toallas. Te enseñamos a ser recursivo con lo que tienes a mano.";
+            responseData.cta.text = "Ver detalles del programa";
+            responseData.cta.link = "#como-lograrlo";
+            responseData.cta.icon = "fa-dumbbell";
         }
         else if (message.includes('nivel') || message.includes('difícil') || message.includes('intensidad')) {
-            return "El programa incluye 6 niveles: Básico 1, Básico 2, Intermedio 1, Intermedio 2, Avanzado 1 y Avanzado 2. Cada nivel consta de 5 clases. Puedes comenzar desde el nivel que mejor se adapte a tu condición física actual.";
+            responseData.text = "El programa incluye 6 niveles: Básico 1, Básico 2, Intermedio 1, Intermedio 2, Avanzado 1 y Avanzado 2. Cada nivel consta de 5 clases. Puedes comenzar desde el nivel que mejor se adapte a tu condición física actual.";
+            responseData.cta.text = "Conocer niveles del programa";
+            responseData.cta.link = "#como-lograrlo";
+            responseData.cta.icon = "fa-layer-group";
+        }
+        else if (message.includes('beneficio') || message.includes('ventaja') || message.includes('lograr')) {
+            responseData.text = "Los beneficios incluyen pérdida de peso, tonificación muscular, mejor postura, aumento de energía, reducción del estrés y mejor calidad de sueño. Todo desde la comodidad de tu hogar.";
+            responseData.cta.text = "Descubrir beneficios";
+            responseData.cta.link = "#que-lograr";
+            responseData.cta.icon = "fa-check";
+        }
+        else if (message.includes('testimonio') || message.includes('opinión') || message.includes('experiencia')) {
+            responseData.text = "Tenemos muchos testimonios de personas que han logrado resultados increíbles. Te invito a ver sus historias en la sección de testimonios.";
+            responseData.cta.text = "Ver historias de éxito";
+            responseData.cta.link = "#testimonios";
+            responseData.cta.icon = "fa-users";
         }
         else if (message.includes('hola') || message.includes('buenas') || message.includes('saludos')) {
-            return "¡Hola! Gracias por contactarnos. ¿En qué puedo ayudarte con nuestro programa Adelgaza sin Salir de Casa?";
+            responseData.text = "¡Hola! Gracias por contactarnos. ¿En qué puedo ayudarte con nuestro programa Adelgaza sin Salir de Casa?";
+            responseData.cta.text = "Conocer el programa";
+            responseData.cta.link = "#que-lograr";
+            responseData.cta.icon = "fa-info-circle";
         }
         else if (message.includes('gracias') || message.includes('genial') || message.includes('excelente')) {
-            return "¡De nada! Estamos aquí para ayudarte. ¿Hay algo más en lo que pueda asistirte?";
+            responseData.text = "¡De nada! Estamos aquí para ayudarte. ¿Hay algo más en lo que pueda asistirte?";
+            responseData.cta.text = "¡Quiero inscribirme!";
+            responseData.cta.link = "#precio";
+            responseData.cta.icon = "fa-arrow-right";
+        }
+        else if (message.includes('garantía') || message.includes('devolucion') || message.includes('reembolso')) {
+            responseData.text = "Ofrecemos una garantía de satisfacción de 7 días con 100% de devolución del dinero sin preguntas. Si no estás satisfecho, te devolvemos tu inversión.";
+            responseData.cta.text = "Inscribirme con garantía";
+            responseData.cta.link = "#precio";
+            responseData.cta.icon = "fa-shield-alt";
+        }
+        else if (message.includes('alimentación') || message.includes('dieta') || message.includes('comida') || message.includes('nutrición')) {
+            responseData.text = "El programa incluye consejos generales de alimentación saludable para complementar tus rutinas de ejercicio. Te enseñamos hábitos alimenticios sostenibles que potenciarán tus resultados.";
+            responseData.cta.text = "Ver detalles nutricionales";
+            responseData.cta.link = "#como-lograrlo";
+            responseData.cta.icon = "fa-apple-alt";
+        }
+        else if (message.includes('comprar') || message.includes('pagar') || message.includes('adquirir')) {
+            responseData.text = "Puedes adquirir el programa completo con un solo pago. Aceptamos todas las tarjetas de crédito y débito principales, así como PayPal. Haz clic en el botón de abajo para realizar tu compra de forma segura.";
+            responseData.cta.text = "Comprar ahora";
+            responseData.cta.link = "#precio";
+            responseData.cta.icon = "fa-credit-card";
+        }
+        else if (message.includes('oferta') || message.includes('descuento') || message.includes('promoción')) {
+            responseData.text = "¡Tenemos una oferta especial! El programa completo tiene un precio normal de $169 USD, pero ahora puedes obtenerlo por solo $90 USD, un 47% de descuento. Esta oferta es por tiempo limitado.";
+            responseData.cta.text = "Aprovechar oferta";
+            responseData.cta.link = "#precio";
+            responseData.cta.icon = "fa-percentage";
+        }
+        else {
+            // Respuesta por defecto
+            responseData.text = "Gracias por tu pregunta. Para información más detallada sobre el programa, te invito a conocer nuestras secciones o inscribirte directamente.";
+            responseData.cta.text = "¡Quiero inscribirme ahora!";
+            responseData.cta.link = "#precio";
+            responseData.cta.icon = "fa-arrow-right";
         }
         
-        // Respuesta por defecto
-        return "Gracias por tu pregunta. Para información más detallada sobre el programa, te recomiendo que te inscribas o contactes directamente con nuestro equipo a través del botón de contacto al final de la página.";
+        return responseData;
     }
     
     // Función para agregar mensajes al chat
     function addMessage(message, sender) {
         const messageElement = document.createElement('div');
         messageElement.className = `message ${sender}-message`;
-        messageElement.textContent = message;
+        
+        // Si es un mensaje del bot, procesamos el contenido
+        if (sender === 'bot') {
+            // Si el mensaje es un objeto con texto y CTA
+            let messageText = "";
+            let ctaData = null;
+            
+            if (typeof message === 'object') {
+                if (message.text) {
+                    messageText = message.text;
+                }
+                if (message.cta) {
+                    ctaData = message.cta;
+                }
+            } else {
+                messageText = message;
+            }
+            
+            // Crear contenedor para el mensaje y el CTA
+            messageElement.innerHTML = `<div>${messageText}</div>`;
+            
+            // Agregar el botón CTA específico para este mensaje si existe
+            if (ctaData) {
+                const ctaButton = document.createElement('a');
+                ctaButton.href = ctaData.link;
+                ctaButton.className = "chat-cta-button";
+                ctaButton.innerHTML = `${ctaData.text} <i class='fas ${ctaData.icon}'></i>`;
+                ctaButton.onclick = function(e) {
+                    // Cerrar el chat al hacer clic en el CTA
+                    floatingChatBox.classList.remove('active');
+                    adjustTimerPosition(false);
+                    
+                    // Registrar evento de análisis
+                    if (window.analyticsSystem) {
+                        window.analyticsSystem.trackEvent('CTA', 'click', `Chatbot - ${ctaData.text}`);
+                    }
+                };
+                
+                // Agregar el botón al mensaje
+                messageElement.appendChild(ctaButton);
+            }
+        } else {
+            // Si es un mensaje del usuario, solo mostramos el texto
+            messageElement.textContent = message;
+        }
         
         // Insertar antes del indicador de escritura
         chatBody.insertBefore(messageElement, typingIndicator);
