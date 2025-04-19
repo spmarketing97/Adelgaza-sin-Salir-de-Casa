@@ -20,6 +20,50 @@ Esta es una landing page profesional creada para el programa "Adelgaza sin Salir
   - `img/testimonio7.jpg`: Imagen para el testimonio ficticio (Laura Gómez)
 - `Video/`: Carpeta que contiene los archivos de video
   - `Video/banner-video.mp4`: Video principal para el banner de la página
+- `analytics.js`: Sistema de análisis e informes semanales
+- `config.js`: Archivo de configuración (versión segura para GitHub)
+
+## Configuración de Credenciales
+
+Para proteger tus datos sensibles, sigue estos pasos:
+
+1. No modifiques directamente `config.js`, ya que este archivo se puede subir a GitHub sin riesgo.
+
+2. Crea un archivo `config.local.js` con tus credenciales reales:
+   ```javascript
+   // Configuración local con credenciales reales
+   // NO SUBIR ESTE ARCHIVO A GITHUB
+   
+   // Configuración de credenciales reales para el entorno local
+   process.env.EMAIL = 'tu-email@example.com';
+   process.env.APP_PASSWORD = 'tu-contraseña-app';
+   process.env.REPORT_RECIPIENT = 'destinatario@example.com';
+   process.env.REPORT_SUBJECT = 'Adelgaza sin Salir de Casa';
+   process.env.ANALYTICS_ID = 'G-VSWS87PY47';
+   ```
+
+3. Incluye `config.local.js` en el archivo `.gitignore` para evitar que se suba a GitHub.
+
+4. Para asegurarte de que el archivo no se suba, ejecuta este comando en la terminal:
+   ```
+   git update-index --assume-unchanged config.local.js
+   ```
+
+## Archivos Seguros para Subir a GitHub
+
+Los siguientes archivos se pueden subir a GitHub sin riesgo:
+- `index.html`
+- `analytics.js`
+- `config.js` (versión segura sin credenciales)
+- Carpetas `img/` y `Video/`
+- Archivos `.bat`
+- `README.md`
+
+## Archivos NO Seguros para GitHub (incluidos en .gitignore)
+
+Estos archivos contienen información sensible y NO deben subirse a GitHub:
+- `.env`
+- `config.local.js`
 
 ## Instrucciones de Implementación
 
@@ -73,5 +117,6 @@ Para evitar perder tus imágenes y videos al cerrar la carpeta del proyecto, uti
 - Totalmente responsive para adaptarse a diferentes dispositivos
 - Animación pulsante en el botón CTA para aumentar las conversiones
 - Organización clara de los beneficios, niveles y bonos del programa
+- Sistema de análisis e informes semanales
 
 Para cualquier modificación o personalización adicional, edita el archivo `index.html`. 
