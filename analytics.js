@@ -1,6 +1,17 @@
 // Sistema de análisis e informes semanales
 // Este archivo se puede compartir en GitHub ya que no contiene credenciales directas
 
+// Intentar cargar credenciales si estamos en un entorno Node.js
+let credentials = {};
+if (typeof require !== 'undefined') {
+  try {
+    credentials = require('./credentials/credentials.json');
+    console.log('Credenciales cargadas correctamente');
+  } catch (e) {
+    console.warn('No se pudieron cargar las credenciales:', e.message);
+  }
+}
+
 // Clase principal para análisis
 class Analytics {
   constructor() {
@@ -10,6 +21,7 @@ class Analytics {
     this.startTime = new Date();
     this.initialized = false;
     this.analyticsId = window.reportConfig?.analytics?.id || '';
+    this.credentials = credentials;
   }
 
   // Inicializa el sistema de análisis
@@ -40,6 +52,11 @@ class Analytics {
   initGoogleAnalytics() {
     // Código para inicializar Google Analytics
     console.log(`Inicializando Google Analytics con ID: ${this.analyticsId}`);
+    
+    // Aquí podríamos usar las credenciales completas si es necesario
+    if (this.credentials.google_analytics) {
+      console.log('Usando credenciales completas de Google Analytics');
+    }
   }
   
   // Registra una vista de página

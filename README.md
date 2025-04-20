@@ -59,4 +59,72 @@ npx serve
 
 ## Contacto
 
-Para cualquier consulta sobre este repositorio, contacta a [tu-email@ejemplo.com] 
+Para cualquier consulta sobre este repositorio, contacta a [tu-email@ejemplo.com]
+
+## Configuración del Sistema de Informes Semanales
+
+La aplicación cuenta con un sistema de informes semanales que envía estadísticas y métricas importantes por correo electrónico cada lunes a las 9:00 AM. A continuación se explica cómo configurarlo correctamente:
+
+### Archivo de Credenciales
+
+Las credenciales se almacenan en un archivo JSON separado para mayor seguridad. 
+
+1. Se ha creado una carpeta `credentials` en la raíz del proyecto
+2. Dentro de esta carpeta debe existir un archivo llamado `credentials.json`
+3. Puede usar el script `actualizar-credenciales.bat` para crear inicialmente este archivo
+
+### Estructura del archivo credentials.json
+
+```json
+{
+  "google_analytics": {
+    "api_key": "YOUR_GA_API_KEY",
+    "client_id": "YOUR_GA_CLIENT_ID",
+    "client_secret": "YOUR_GA_CLIENT_SECRET",
+    "refresh_token": "YOUR_GA_REFRESH_TOKEN",
+    "property_id": "G-VSWS87PY47"
+  },
+  "email": {
+    "service": "gmail",
+    "from": "solucionesworld2016@gmail.com",
+    "app_password": "hvyj qclp lcuy gsgt"
+  },
+  "emailjs": {
+    "service_id": "service_adelgaza",
+    "template_id": "template_cuestionario",
+    "public_key": "YOUR_EMAILJS_PUBLIC_KEY",
+    "private_key": "YOUR_EMAILJS_PRIVATE_KEY"
+  }
+}
+```
+
+### Configuración del Informe Semanal
+
+El sistema de informes semanales está configurado para utilizar las credenciales del archivo JSON. Los archivos relevantes son:
+
+- `config.js` - Configuración general que carga las credenciales
+- `analytics.js` - Sistema de análisis que recopila los datos
+- `cuestionario/weekly-report.js` - Generación y envío del informe
+- `cuestionario/schedule-report.js` - Programación del informe
+
+### Ejecución manual del informe
+
+Para ejecutar manualmente el informe semanal:
+
+```bash
+cd cuestionario
+node weekly-report.js
+```
+
+### Programación automática
+
+Para iniciar el programador que enviará los informes cada lunes:
+
+```bash
+cd cuestionario
+node schedule-report.js
+```
+
+## Seguridad
+
+El archivo de credenciales debe mantenerse seguro y nunca subirse a repositorios públicos. El archivo `.gitignore` ya está configurado para excluir la carpeta `credentials/`. 
