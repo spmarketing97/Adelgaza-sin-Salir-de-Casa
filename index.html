@@ -2123,6 +2123,121 @@
                 flex: 1;
             }
         }
+        
+        .social-proof {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 6px;
+            padding: 5px 10px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: #333;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .stars {
+            color: #ffc107;
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+            letter-spacing: 1px;
+        }
+        
+        .students-count {
+            font-weight: 600;
+            margin-bottom: 0;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .social-proof {
+                padding: 4px 8px;
+                margin: 8px 0;
+            }
+            
+            .stars {
+                font-size: 1rem;
+            }
+            
+            .students-count {
+                font-size: 0.7rem;
+            }
+        }
+        
+        .floating-popups {
+            position: fixed;
+            left: 20px;
+            bottom: 100px;
+            z-index: 998;
+        }
+        
+        .floating-popup {
+            position: relative;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            transform: translateX(-300px);
+            opacity: 0;
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            border-left: 4px solid #ff5757;
+        }
+        
+        .floating-popup.active {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .popup-close {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 14px;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .popup-content {
+            flex: 1;
+            padding-left: 10px;
+        }
+        
+        .popup-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+            color: #333;
+        }
+        
+        .popup-action {
+            font-size: 0.8rem;
+            color: #444;
+            line-height: 1.3;
+        }
+        
+        .popup-time {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 3px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .floating-popups {
+                bottom: 70px;
+                left: 10px;
+            }
+            
+            .floating-popup {
+                width: 220px;
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2158,6 +2273,11 @@
                 <div class="cta-buttons">
                     <a href="#como-lograrlo" class="banner-cta secondary-cta">VER CONTENIDO</a>
                 </div>
+                <!-- Prueba social con estrellas y alumnos satisfechos -->
+                <div class="social-proof">
+                    <div class="stars">★★★★★</div>
+                    <p class="students-count">+1500 alumnos satisfechos</p>
+                </div>
             </div>
         </div>
     </header>
@@ -2174,10 +2294,7 @@
             <h1>Mejora tu estado físico y emocional</h1>
             <p class="section-subtitle">Descubre un enfoque único para transformar tu cuerpo desde casa</p>
             <div class="video-container">
-                <video controls autoplay muted>
-                    <source src="Video/banner-video.mp4" type="video/mp4">
-                    Tu navegador no soporta videos HTML5.
-                </video>
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/F-8GHRSc5EQ?enablejsapi=1" title="Video de Adelgaza sin Salir de Casa" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
             </div>
         </div>
     </section>
@@ -2559,6 +2676,11 @@
         </div>
     </div>
     
+    <!-- Popups flotantes de satisfacción de clientes -->
+    <div class="floating-popups" id="floatingPopups">
+        <!-- Los popups se insertarán mediante JavaScript -->
+    </div>
+    
     <!-- Scripts -->
     <script>
         // Menú de navegación y scroll
@@ -2786,14 +2908,7 @@
             // Cambiar automáticamente cada 10 segundos
             setInterval(nextTestimonial, 10000);
             
-            // Configurar el video para que se reproduzca automáticamente una sola vez
-            const video = document.querySelector('video');
-            if (video) {
-                video.onended = function() {
-                    this.pause();
-                    this.currentTime = 0;
-                };
-            }
+            // Ya no necesitamos configurar el video HTML5 porque ahora usamos un iframe de YouTube
         };
 
         // Chatbot Functionality
@@ -3007,6 +3122,25 @@
                     
                     // Añadir evento para expandir/contraer
                     question.addEventListener('click', () => {
+                        // Cerrar todas las preguntas abiertas primero
+                        const allOpenAnswers = document.querySelectorAll('.faq-answer.open');
+                        const allActiveQuestions = document.querySelectorAll('.faq-question.active');
+                        
+                        allOpenAnswers.forEach(openAnswer => {
+                            // No cerrar la que estamos abriendo si ya está abierta
+                            if (openAnswer !== answer) {
+                                openAnswer.classList.remove('open');
+                            }
+                        });
+                        
+                        allActiveQuestions.forEach(activeQuestion => {
+                            // No desactivar la que estamos activando si ya está activa
+                            if (activeQuestion !== question) {
+                                activeQuestion.classList.remove('active');
+                            }
+                        });
+                        
+                        // Alternar la que hemos hecho clic
                         answer.classList.toggle('open');
                         question.classList.toggle('active');
                     });
@@ -3471,6 +3605,151 @@
             updateTimer();
             const countdownInterval = setInterval(updateTimer, 1000);
         }
+
+        // Datos para los popups flotantes
+        const popupData = [
+            { name: "María García", action: "acaba de comprar el programa completo", time: "Hace 5 minutos" },
+            { name: "Juan Pérez", action: "ha comprado el nivel avanzado", time: "Hace 2 minutos" },
+            { name: "Ana Martínez", action: "acaba de adquirir el programa completo", time: "Hace 7 minutos" },
+            { name: "Carlos López", action: "ha comprado los niveles básico e intermedio", time: "Hace 3 minutos" },
+            { name: "Laura Torres", action: "realizó el pago del programa completo", time: "Hace 1 minuto" },
+            { name: "Pedro Ramírez", action: "ha adquirido los 6 niveles del programa", time: "Hace 6 minutos" },
+            { name: "Sofia Vargas", action: "compró el programa con todos los bonus", time: "Hace 4 minutos" },
+            { name: "Javier Ruiz", action: "acaba de pagar el programa completo", time: "Hace 8 minutos" },
+            { name: "Carmen Díaz", action: "ha adquirido el programa de 30 clases", time: "Hace 2 minutos" },
+            { name: "Miguel Sánchez", action: "compró el curso completo con certificado", time: "Hace 5 minutos" },
+            { name: "Elena Martín", action: "acaba de adquirir el programa premium", time: "Hace 7 minutos" },
+            { name: "Diego Fernández", action: "ha comprado el paquete completo", time: "Hace 3 minutos" },
+            { name: "Raquel Jiménez", action: "realizó el pago del curso completo", time: "Hace 1 minuto" },
+            { name: "Sergio Moreno", action: "ha adquirido todos los niveles", time: "Hace 6 minutos" },
+            { name: "Natalia Gil", action: "compró el programa con descuento", time: "Hace 4 minutos" },
+            { name: "Pablo Herrera", action: "acaba de pagar el curso completo", time: "Hace 8 minutos" },
+            { name: "Patricia Castro", action: "ha comprado el programa de 6 niveles", time: "Hace 2 minutos" },
+            { name: "Roberto Vega", action: "adquirió el programa con todos los bonus", time: "Hace 5 minutos" },
+            { name: "Cristina Blanco", action: "acaba de pagar por el curso completo", time: "Hace 7 minutos" },
+            { name: "Martín Flores", action: "compró el programa de entrenamiento completo", time: "Hace 3 minutos" },
+            { name: "Alicia Ramos", action: "ha adquirido el programa especial", time: "Hace 1 minuto" },
+            { name: "Hugo Molina", action: "realizó el pago del curso premium", time: "Hace 6 minutos" },
+            { name: "Lorena Ortiz", action: "acaba de comprar el programa entero", time: "Hace 4 minutos" },
+            { name: "Víctor Medina", action: "ha adquirido el curso con descuento", time: "Hace 8 minutos" },
+            { name: "Beatriz León", action: "compró el programa completo", time: "Hace 2 minutos" },
+            { name: "Fernando Reyes", action: "acaba de pagar el programa premium", time: "Hace 5 minutos" },
+            { name: "Julia Calvo", action: "ha adquirido el curso con certificado", time: "Hace 7 minutos" },
+            { name: "Alberto Cruz", action: "realizó la compra del programa completo", time: "Hace 3 minutos" },
+            { name: "Sara Gallego", action: "acaba de adquirir todos los niveles", time: "Hace 1 minuto" },
+            { name: "Rubén Santos", action: "compró el programa con todos los bonus", time: "Hace 6 minutos" },
+            { name: "Eva Marín", action: "ha pagado por el curso completo", time: "Hace 4 minutos" },
+            { name: "Adrián Delgado", action: "acaba de adquirir el programa premium", time: "Hace 8 minutos" },
+            { name: "Lucía Ferrer", action: "compró el curso de 6 niveles", time: "Hace 2 minutos" },
+            { name: "Antonio Vidal", action: "ha adquirido el programa completo", time: "Hace 5 minutos" },
+            { name: "Isabel Aguilar", action: "acaba de pagar el curso con bonus", time: "Hace 7 minutos" },
+            { name: "Rafael Soler", action: "compró el programa completo", time: "Hace 3 minutos" },
+            { name: "Silvia Muñoz", action: "ha adquirido el programa con descuento", time: "Hace 1 minuto" },
+            { name: "Jorge Prieto", action: "realizó el pago del curso premium", time: "Hace 6 minutos" },
+            { name: "Mónica Nieto", action: "acaba de comprar el programa completo", time: "Hace 4 minutos" },
+            { name: "Gabriel Pardo", action: "ha adquirido todos los niveles del curso", time: "Hace 8 minutos" },
+            { name: "Celia Hidalgo", action: "compró el programa con certificado", time: "Hace 2 minutos" },
+            { name: "Oscar Saez", action: "acaba de pagar el curso completo", time: "Hace 5 minutos" },
+            { name: "Noelia Pastor", action: "ha adquirido el programa premium", time: "Hace 7 minutos" },
+            { name: "Héctor Moya", action: "realizó la compra del curso con bonus", time: "Hace 3 minutos" },
+            { name: "Diana Soria", action: "acaba de adquirir el programa completo", time: "Hace 1 minuto" },
+            { name: "Ignacio Lara", action: "compró todos los niveles del curso", time: "Hace 6 minutos" },
+            { name: "Teresa Román", action: "ha pagado por el programa premium", time: "Hace 4 minutos" },
+            { name: "Emilio Mora", action: "acaba de adquirir el curso completo", time: "Hace 8 minutos" },
+            { name: "Marta Rojas", action: "compró el programa con todos los bonus", time: "Hace 2 minutos" }
+        ];
+
+        // Función para manejar los popups flotantes
+        function handleFloatingPopups() {
+            const popupsContainer = document.getElementById('floatingPopups');
+            let currentPopupIndex = 0;
+            let activePopup = null;
+
+            function showNextPopup() {
+                // Si hay un popup activo, lo quitamos primero
+                if (activePopup) {
+                    activePopup.classList.remove('active');
+                    
+                    // Esperar a que termine la animación de salida antes de mostrar el siguiente
+                    setTimeout(() => {
+                        if (activePopup && activePopup.parentNode) {
+                            popupsContainer.removeChild(activePopup);
+                        }
+                        
+                        // Mostrar el siguiente popup
+                        displayPopup();
+                    }, 500);
+                } else {
+                    displayPopup();
+                }
+            }
+
+            function displayPopup() {
+                // Crear el nuevo popup
+                const popupInfo = popupData[currentPopupIndex];
+                const popup = document.createElement('div');
+                popup.className = 'floating-popup';
+                
+                popup.innerHTML = `
+                    <button class="popup-close">&times;</button>
+                    <div class="popup-content">
+                        <div class="popup-name">${popupInfo.name}</div>
+                        <div class="popup-action">${popupInfo.action}</div>
+                        <div class="popup-time">${popupInfo.time}</div>
+                    </div>
+                `;
+                
+                popupsContainer.appendChild(popup);
+                
+                // Mostrar el popup (animación)
+                setTimeout(() => {
+                    popup.classList.add('active');
+                }, 10);
+                
+                // Configurar el botón de cerrar
+                const closeButton = popup.querySelector('.popup-close');
+                closeButton.addEventListener('click', () => {
+                    popup.classList.remove('active');
+                    setTimeout(() => {
+                        if (popup.parentNode) {
+                            popupsContainer.removeChild(popup);
+                        }
+                        activePopup = null;
+                    }, 500);
+                });
+                
+                // Establecer temporizador para que desaparezca automáticamente
+                setTimeout(() => {
+                    if (popup.parentNode) {
+                        popup.classList.remove('active');
+                        
+                        setTimeout(() => {
+                            if (popup.parentNode) {
+                                popupsContainer.removeChild(popup);
+                            }
+                            activePopup = null;
+                        }, 500);
+                    }
+                }, 5000); // Desaparece después de 5 segundos
+                
+                // Actualizar el popup activo y el índice
+                activePopup = popup;
+                currentPopupIndex = (currentPopupIndex + 1) % popupData.length;
+            }
+
+            // Mostrar el primer popup después de 2 segundos de carga de la página
+            setTimeout(() => {
+                showNextPopup();
+                
+                // Establecer intervalo para mostrar los popups cada 10 segundos
+                setInterval(showNextPopup, 10000);
+            }, 2000);
+        }
+
+        // Iniciar los popups flotantes cuando la página se carga
+        document.addEventListener('DOMContentLoaded', function() {
+            handleFloatingPopups();
+        });
     </script>
     <!-- Font Awesome para iconos -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>

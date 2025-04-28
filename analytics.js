@@ -122,19 +122,13 @@ class Analytics {
       });
     }
     
-    // Escucha interacciones con el video
-    const video = document.querySelector('video');
-    if (video) {
-      video.addEventListener('play', () => {
-        this.trackEvent('Video', 'play', 'Video Principal');
-      });
-      
-      video.addEventListener('pause', () => {
-        this.trackEvent('Video', 'pause', 'Video Principal');
-      });
-      
-      video.addEventListener('ended', () => {
-        this.trackEvent('Video', 'complete', 'Video Principal');
+    // Configurar escucha de eventos para el iframe de YouTube
+    // Nota: Para rastrear eventos de iframe de YouTube se necesita configurar YouTube API
+    // Aquí implementamos una solución simple detectando clics en el contenedor
+    const videoContainer = document.querySelector('.video-container');
+    if (videoContainer) {
+      videoContainer.addEventListener('click', () => {
+        this.trackEvent('Video', 'interaction', 'Video YouTube Principal');
       });
     }
   }
